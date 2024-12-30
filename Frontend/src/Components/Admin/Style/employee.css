@@ -1,0 +1,31 @@
+.input_div{
+    
+}
+
+.table-font{
+    font-size: 0.75rem;
+}
+
+@media only screen and (max-width: 900px) {
+    .table-font{
+        font-size: 0.75rem;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    .table-font{
+        font-size: 0.5rem;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    .table-font{
+        font-size: 0.2rem;
+    }
+  }
+
+@media only screen and (max-width: 400px) {
+    .table-font{
+        font-size: 0.2rem;
+    }
+  }

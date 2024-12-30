@@ -7,6 +7,10 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.js';
 import userRoutes from './routes/userRoutes.js';
+import { adminRouter } from './routes/authRoutes.js';
+import { policeRouter } from './routes/policeRoutes.js';
+import { prisionerRouter } from './routes/prisionerRoutes.js';
+import { commonRouter } from './routes/commonRoutes.js';
 
 dotenv.config();
 
@@ -34,7 +38,7 @@ app.use(cors({
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
+    credentials: true, //Allow credentials (cookies) to be sent
 }));
 
 // Static file serving
@@ -42,7 +46,10 @@ app.use(express.static('Public'));
 app.use('/Uploads', express.static(path.join(__dirname, 'Public', 'Uploads')));
 
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/auth', adminRouter)
+app.use('/common', commonRouter)
+app.use('/police', policeRouter)
+app.use('/prisioner', prisionerRouter)
 
 // Global error handler
 app.use(errorHandler);

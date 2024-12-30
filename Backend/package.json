@@ -16,7 +16,25 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.12.0",
+    "nepali-datetime": "^1.4.0",
     "nodemon": "^3.1.9",
     "path": "^0.12.7"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "PK_Duty"
+  },
+  "keywords": [
+    "Duty",
+    "maker",
+    "created",
+    "by",
+    "Prem",
+    "Kumar",
+    "Yadav"
+  ],
+  "author": "Prem Kumar Yadav",
+  "license": "ISC",
+  "description": ""
 }

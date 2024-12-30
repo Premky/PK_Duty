@@ -8,12 +8,19 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, BrowserRouter } fr
 
 import NepaliDate from 'nepali-datetime'
 import Login from './Components/Login/Login';
+import PoliceForm from './Components/Admin/Police/PoliceForm';
+import LogoutButton from './Components/Login/Logout';
+import PrisionersForm from './Components/Admin/Prisioners/PrisionersForm';
+import CaseForm from './Components/Admin/OtherRequired/CaseForm';
 const Nepalidate = new NepaliDate();
 const currentDate = Nepalidate.format('YYYY-MM-DD')
 const currentTime = Nepalidate.format('HH:mm');
 
 function App() {
 
+  const logout = async () => {
+    await handleLogout();
+};
 
   return (
     <>
@@ -21,6 +28,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Login/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/logout' element={<LogoutButton/>}/>
+          <Route path='/cases' element={<CaseForm/>}/>
+
+          <Route path='/police' element={<PoliceForm/>}/>
+          <Route path='/prisioner' element={<PrisionersForm/>}/>
         </Routes>
       </BrowserRouter>
     </>
