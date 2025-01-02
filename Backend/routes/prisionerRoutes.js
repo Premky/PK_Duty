@@ -23,8 +23,8 @@ const fy_date = fy + '-4-1'
 
 router.post('/add_prisioner', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
-    console.log('User ID:', userToken.uid);
-    console.log('Office ID:', userToken.office);
+    // console.log('User ID:', userToken.uid);
+    // console.log('Office ID:', userToken.office);
 
     // Destructuring the data from the request body
     const {
@@ -178,8 +178,11 @@ router.delete('/delete_police/:id', async (req, res) => {
     }
 });
 
-router.get('/get_report', async (req, res) => {
-    // console.log('Rank working');
+router.get('/get_report', verifyToken, async (req, res) => {
+    const userToken = req.user; // Extract details from the token
+    // console.log('User ID:', userToken.uid);
+    // console.log('Office ID:', userToken.office);
+
     const sql = `SELECT 
                 c.name_np AS CaseNameNP,
                 c.name_en AS CaseNameEN,
@@ -195,12 +198,14 @@ router.get('/get_report', async (req, res) => {
 
                 FROM 
                     prisioners_info pi
-                    LEFT JOIN cases c ON pi.case_id = c.id
+                    LEFT JOIN cases c ON pi.case_id = c.id   
+                WHERE 
+                    pi.office_id = ?          
                 GROUP BY 
                     case_id`;
 
     try {
-        const result = await query(sql);
+        const result = await query(sql, userToken.office);
         return res.json({ Status: true, Result: result })
     } catch (err) {
         console.error("Database Query Error:", err);
@@ -210,21 +215,3 @@ router.get('/get_report', async (req, res) => {
 
 
 export { router as prisionerRouter }
-
-
-// SELECT 
-//     `case_id` AS CaseName,
-//     COUNT(*) AS Total,
-    
-//     -- Permanent Male and Female
-//     SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
-//     SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
-    
-//     -- Non-Permanent Male and Female
-//     SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
-//     SUM(CASE WHEN prisioner_type = 'थुनुवा' = 0 AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale
-
-// FROM 
-//     prisioners_info
-// GROUP BY 
-//     `case_id`;

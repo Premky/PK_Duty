@@ -51,8 +51,8 @@ const PrisionersForm = () => {
     const [prisioner_type, setPrisioner_type] = useState("");
     const [case_id, setCase_id] = useState("");
     const [gender, setGender] = useState("");
-    const [faisala_office, setFaisala_office] = useState("");
-    const [punarabedan, setPunrabedan] = useState("");
+    const [faisala_office, setFaisala_office] = useState(0);
+    const [punarabedan, setPunrabedan] = useState(0);
 
     const [arrestedDate, setArrestedDate] = useState("");
     const [releaseDate, setReleaseDate] = useState("");

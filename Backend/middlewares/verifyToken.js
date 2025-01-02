@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const verifyToken = (req, res, next) => {
-    console.log('Received cookies:', req.cookies);
+    // console.log('Received cookies:', req.cookies);
 
     // Get token from cookies or authorization header
     const cookietoken = req.cookies.token;
@@ -21,7 +21,8 @@ const verifyToken = (req, res, next) => {
             return res.status(403).json({ message: "Forbidden: Invalid token" });
         }
 
-        console.log('Decoded token:', decoded);
+        // console.log('Decoded token:', decoded);
+        
         req.user = decoded; // Attach the decoded user data to the request
         next();
     });
