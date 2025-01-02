@@ -34,7 +34,7 @@ const PrisionersForm = () => {
     const [currentData, setCurrentData] = useState();
     const [isLoading, startTransition] = useTransition();
     const [editing, setEditing] = useState(false);
-    
+
     const [countries, setCountries] = useState([]);
     const [juidicialbody, setJuidicialbody] = useState([]);
     const [adminOffice, setAdminOffice] = useState([]);
@@ -320,6 +320,7 @@ const PrisionersForm = () => {
                                             // defaultValue={prisioner_type}  // Set default value to empty string
                                             value={prisioner_type}
                                             {...register('prisioner_type', { required: "This field is required." })}
+                                            onChange={(e) => setPrisioner_type(e.target.value)}
                                             autoWidth
                                             label="कैदीको प्रकार"
                                         >
@@ -339,7 +340,7 @@ const PrisionersForm = () => {
                                             id="case_id"
                                             value={case_id}
                                             {...register('case_id', { required: "This field is required." })}
-                                            // onChange={(e) => setSelectedCase(e.target.value)}
+                                            onChange={(e) => setCase_id(e.target.value)}
                                             autoWidth
                                             label="मुद्दा"
                                         >
@@ -432,6 +433,7 @@ const PrisionersForm = () => {
                                             // defaultValue=""  // Set default value to empty string
                                             value={gender}
                                             {...register('gender', { required: "This field is required." })}
+                                            onChange={(e) => setGender(e.target.value)}
                                             autoWidth
                                             label="लिङ्ग"
                                         >
@@ -543,7 +545,7 @@ const PrisionersForm = () => {
                                             id="faisala_office"
                                             value={faisala_office}
                                             {...register('faisala_office')}
-                                            // onChange={(e) => setSelectedCase(e.target.value)}
+                                            onChange={(e) => setFaisala_office(e.target.value)}
                                             autoWidth
                                             label="फैसला सुनाउने निकाय"
                                             defaultValue='0'
@@ -586,6 +588,7 @@ const PrisionersForm = () => {
                                             defaultValue="0"  // Set default value to empty string
                                             value={punarabedan}
                                             {...register('punarabedan')}
+                                            onChange={(e) => setPunrabedan(e.target.value)}
                                             autoWidth
                                             label="पुनरावेदन"
                                         >
