@@ -22,6 +22,7 @@ import { useActionState } from 'react'
 
 const CaseForm = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem('token');
     const navigate = useNavigate();
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
@@ -37,12 +38,12 @@ const CaseForm = () => {
     const onFormSubmit = async (data) => {
         // setLoading(true);
         startTransition(async () => {
-            // console.log(data)
+            // console.log(token)
             try {
                 // const formData = new FormData();
                 const url = editing ? `${BASE_URL}/common/update_case/${currentData.id}` : `${BASE_URL}/common/add_case`;
                 const method = editing ? 'PUT' : 'POST';
-                const result = await axios({ method, url, data, withCredentials: true })
+                const result = await axios({ method, url, data, headers:{Authorization:`Bearer ${token}`}, withCredentials: true })
 
                 if (result.data.Status) {
                     alert(`Record ${editing ? 'updated' : 'added'} ${result.data.id} successfully!`);

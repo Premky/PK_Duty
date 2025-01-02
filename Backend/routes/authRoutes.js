@@ -83,13 +83,14 @@ router.post('/login', (req, res) => {
                     { expiresIn: '3d' }
                 );
                 //Send response with token and user details
-                res.cookie( 'token', token, { 
-                            httpOnly: true, 
-                            secure: true,
-                            // secure: false, //for development only
-                            sameSite:"strict",
-                            maxAge:3*24*60*60*1000, //Expire after 3 days
-                         });
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'none',
+                    path: '/',
+                    maxAge: 3 * 24 * 60 * 60 * 1000, // Expire after 3 days
+                });
+                
                 // console.log(user.branch_name)
                 return res.json({
                     loginStatus: true,

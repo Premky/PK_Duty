@@ -21,9 +21,11 @@ import Box from '@mui/material/Box';
 
 import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
+import PrisionersRecordTable from './PrisionersRecordTable'
 
 const PrisionersForm = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem('token');
     const navigate = useNavigate();
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
@@ -51,7 +53,7 @@ const PrisionersForm = () => {
     const [fineDuration, setFineDuration] = useState(0);
     const [totalDuration, setTotalDuration] = useState(0);
 
-    const calculate_duration = (s,e) => {
+    const calculate_duration = (s, e) => {
         if (s && e) {
             const start = new Date(s);
             const end = new Date(e);
@@ -68,14 +70,14 @@ const PrisionersForm = () => {
 
 
     const calculate_fine_duration = async (fine) => {
-        const fine_duration= fine/300;
+        const fine_duration = fine / 300;
         setFineDuration(fine_duration);
         const total_duration = duration + fine_duration;
         setTotalDuration(total_duration);
     }
 
     const calculate_total_duration = async () => {
-        const total_duration = parseInt(duration)  + parseInt(fineDuration);
+        const total_duration = parseInt(duration) + parseInt(fineDuration);
         setTotalDuration(total_duration);
     }
 
@@ -174,7 +176,12 @@ const PrisionersForm = () => {
                 // const formData = new FormData();
                 const url = editing ? `${BASE_URL}/prisioner/update_prisioner/${currentData.id}` : `${BASE_URL}/prisioner/add_prisioner`;
                 const method = editing ? 'PUT' : 'POST';
-                const result = await axios({ method, url, data, withCredentials: true })
+                const result = await axios({
+                    method, url, data,
+                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true
+                })
+
 
                 if (result.data.Status) {
                     alert(`Record ${editing ? 'updated' : 'added'} ${result.data.id} successfully!`);
@@ -193,12 +200,13 @@ const PrisionersForm = () => {
 
     const fetchRecords = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/police/get_police_records`);
+            const response = await axios.get(`${BASE_URL}/prisioner/get_prisioners`);
             const { Status, Result, Error } = response.data;
 
             if (Status) {
                 if (Result?.length > 0) {
                     setRecords(Result); //Set the fetched Records
+                    console.log(Result);
                 } else {
                     console.log("No Record Found")
                 }
@@ -213,19 +221,25 @@ const PrisionersForm = () => {
     };
 
     const handleEdit = (record) => {
+        console.log(record)
         setCurrentData(record);
         setEditing(true);
+        setValue('office', record.office_id);
+        setValue('prisioner_type', record.prisioner_type);
+        setValue('case_id', record.case_id);
+        setValue('jaherwala', record.jaherwala);
         setValue('name_np', record.name_np);
         setValue('name_en', record.name_en);
+        setValue('country', record.country);
         setValue('address', record.address);
-        setValue('darbandi', record.darbandi);
-        setValue('pmis', record.pmis);
-        setValue('sanket', record.sanket);
-        setValue('working_from', record.working_from);
-        setValue('contact', record.contact);
-        setValue('blood_group', record.blood_group);
-        setValue('dob', record.dob);
         setValue('gender', record.gender);
+        setValue('dob', record.dob);
+        setValue('arrested', record.arrested);
+        setValue('release_date', record.release_date);
+        setValue('faisala_office', record.faisala_office);
+        setValue('faisala_date', record.faisala_date);
+        setValue('punarabedan', record.punarabedan);
+        
         setValue('bp', record.bp);
         setValue('height', record.height);
         setValue('weight', record.weight);
@@ -482,7 +496,7 @@ const PrisionersForm = () => {
                                             <Controller
                                                 name="release_date"
                                                 control={control}
-                                                rules={{ required: "This field is required" }}
+                                                // rules={{ required: "This field is required" }}
                                                 render={({ field: { onChange, onBlur, value, ref } }) => (
                                                     <NepaliDatePicker
                                                         value={value || ""} // Ensure empty string when no date is selected
@@ -584,8 +598,9 @@ const PrisionersForm = () => {
                                             fullWidth
                                             margin="normal"
                                             value={fine}
-                                            onChange={(e) => {setFine(e.target.value)
-                                                            calculate_fine_duration(e.target.value);
+                                            onChange={(e) => {
+                                                setFine(e.target.value)
+                                                calculate_fine_duration(e.target.value);
                                             }}
                                         />
                                     </FormControl>
@@ -610,8 +625,10 @@ const PrisionersForm = () => {
                                             fullWidth
                                             margin="normal"
                                             value={totalDuration}
-                                            onChange={(e) => {setTotalDuration(e.target.value)
-                                                            calculate_total_duration   }}
+                                            onChange={(e) => {
+                                                setTotalDuration(e.target.value)
+                                                calculate_total_duration
+                                            }}
                                             onClick={calculate_total_duration}
                                         />
                                     </FormControl>
@@ -631,6 +648,11 @@ const PrisionersForm = () => {
                     </form>
                 </div>
             </div >
+            <PrisionersRecordTable
+                records={records}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+            />
         </React.Fragment >
     )
 }

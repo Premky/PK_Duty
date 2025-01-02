@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 //Items from Material UI
 import Box from '@mui/material/Box';
@@ -40,7 +40,9 @@ const Login = (onLogin) => {
             case 'सुपरएडमिन':
                 return '/superadmin';
             case 'प्रहरी':
-                return '/police';
+                return '/cases';
+            case 'प्रशासन':
+                return '/prisioner';
             default:
                 return '/';
         }
@@ -62,9 +64,9 @@ const Login = (onLogin) => {
 
     const handleLogin = async (event) => {
         event.preventDefault();
-    
+
         try {
-            const response = await axios.post(`${BASE_URL}/auth/login`, values, {withCredentials:true});
+            const response = await axios.post(`${BASE_URL}/auth/login`, values, { withCredentials: true });
 
             if (response.data.loginStatus) {
                 // Save necessary data in localStorage
@@ -74,7 +76,7 @@ const Login = (onLogin) => {
                 localStorage.setItem("branch", response.data.branch);
                 localStorage.setItem("office_np", response.data.office_np);
                 localStorage.setItem("office_id", response.data.office_id);
-    
+
                 // Determine navigation path based on branch
                 const path = navigateBasedonBranch(response.data.branch);
                 console.log(response.data);
@@ -91,7 +93,7 @@ const Login = (onLogin) => {
             setError(errorMessage);
         }
     };
-    
+
 
     return (
         <>
@@ -130,7 +132,7 @@ const Login = (onLogin) => {
                                 }
                                 label="Password"
                             />
-                            <div style={{color:'red'}}>
+                            <div style={{ color: 'red' }}>
                                 {error}
                             </div>
                             <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">

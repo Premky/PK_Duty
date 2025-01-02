@@ -83,9 +83,13 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
 
 
 //Get Police Records
-router.get('/get_police_records', async (req, res) => {
+router.get('/get_prisioners', async (req, res) => {
     // console.log('Rank working');
-    const sql = `SELECT * FROM sec_employe ORDER BY id`;
+    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
+                FROM prisioners_info pi
+                LEFT JOIN cases c ON pi.case_id = c.id
+                ORDER BY id`;
+
     try {
         const result = await query(sql);
         return res.json({ Status: true, Result: result })
@@ -175,3 +179,21 @@ router.delete('/delete_police/:id', async (req, res) => {
 
 
 export { router as prisionerRouter }
+
+
+// SELECT 
+//     `case_id` AS CaseName,
+//     COUNT(*) AS Total,
+    
+//     -- Permanent Male and Female
+//     SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
+//     SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
+    
+//     -- Non-Permanent Male and Female
+//     SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
+//     SUM(CASE WHEN prisioner_type = 'थुनुवा' = 0 AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale
+
+// FROM 
+//     prisioners_info
+// GROUP BY 
+//     `case_id`;

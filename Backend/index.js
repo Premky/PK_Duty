@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -23,13 +24,16 @@ const __dirname = path.dirname(__filename);
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS setup
 app.use(cors({
-    origin: (origin, callback) => {
+    origin: (origin, callback) => {        
         const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
             'http://localhost:5173',
             'http://localhost:5174',
+            'http://192.168.1.21:5173',
         ];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
