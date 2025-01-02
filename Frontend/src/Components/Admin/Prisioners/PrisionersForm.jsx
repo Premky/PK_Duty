@@ -46,6 +46,13 @@ const PrisionersForm = () => {
     const currentofficenp = localStorage.getItem('office_np')
 
     //Specifically for this form:
+    const [office_id, setOffice_id] = useState("");
+    const [prisioner_type, setPrisioner_type] = useState("");
+    const [case_id, setCase_id] = useState("");
+    const [gender, setGender] = useState("");
+    const [faisala_office, setFaisala_office] = useState("");
+    const [punarabedan, setPunrabedan] = useState("");
+
     const [arrestedDate, setArrestedDate] = useState("");
     const [releaseDate, setReleaseDate] = useState("");
     const [duration, setDuration] = useState(0);
@@ -224,6 +231,14 @@ const PrisionersForm = () => {
         console.log(record)
         setCurrentData(record);
         setEditing(true);
+
+        setOffice_id(record.office_id);
+        setPrisioner_type(record.prisioner_type);
+        setCase_id(record.case_id);
+        setGender(record.gender);
+        setFaisala_office(record.faisala_office);
+        setPunrabedan(record.punarabedan);
+
         setValue('office', record.office_id);
         setValue('prisioner_type', record.prisioner_type);
         setValue('case_id', record.case_id);
@@ -238,12 +253,11 @@ const PrisionersForm = () => {
         setValue('release_date', record.release_date);
         setValue('faisala_office', record.faisala_office);
         setValue('faisala_date', record.faisala_date);
-        setValue('punarabedan', record.punarabedan);
-        
-        setValue('bp', record.bp);
-        setValue('height', record.height);
-        setValue('weight', record.weight);
-        setValue('is_active', record.is_active);
+        setValue('punarabedan', record.punarabedan);        
+        setValue('duration', record.duration);
+        setValue('fine', record.fine);
+        setValue('fine_duration', record.fine_duration);
+        setValue('total_duration', record.total_duration);        
     };
 
     const handleDelete = async (id) => {
@@ -302,7 +316,8 @@ const PrisionersForm = () => {
                                         <Select
                                             labelId="type-label"
                                             id="prisioner_type"
-                                            defaultValue=""  // Set default value to empty string
+                                            // defaultValue={prisioner_type}  // Set default value to empty string
+                                            value={prisioner_type}
                                             {...register('prisioner_type', { required: "This field is required." })}
                                             autoWidth
                                             label="कैदीको प्रकार"
@@ -321,7 +336,7 @@ const PrisionersForm = () => {
                                         <Select
                                             labelId="rank-label"
                                             id="case_id"
-                                            // value={selectedCase}
+                                            value={case_id}
                                             {...register('case_id', { required: "This field is required." })}
                                             // onChange={(e) => setSelectedCase(e.target.value)}
                                             autoWidth
@@ -413,7 +428,8 @@ const PrisionersForm = () => {
                                         <Select
                                             labelId="gender-label"
                                             id="gender"
-                                            defaultValue=""  // Set default value to empty string
+                                            // defaultValue=""  // Set default value to empty string
+                                            value={gender}
                                             {...register('gender', { required: "This field is required." })}
                                             autoWidth
                                             label="लिङ्ग"
@@ -524,7 +540,7 @@ const PrisionersForm = () => {
                                         <Select
                                             labelId="faisala_office-label"
                                             id="faisala_office"
-                                            // value={selectedCase}
+                                            value={faisala_office}
                                             {...register('faisala_office')}
                                             // onChange={(e) => setSelectedCase(e.target.value)}
                                             autoWidth
@@ -567,6 +583,7 @@ const PrisionersForm = () => {
                                             labelId="punarabedan-label"
                                             id="punarabedan"
                                             defaultValue="0"  // Set default value to empty string
+                                            value={punarabedan}
                                             {...register('punarabedan')}
                                             autoWidth
                                             label="पुनरावेदन"

@@ -99,42 +99,45 @@ router.get('/get_prisioners', async (req, res) => {
     }
 });
 
-router.put('/update_police/:id', verifyToken, async (req, res) => {
-    const user_token = req.user; // Details from token, 
+router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
+    const userToken = req.user; // Details from token, 
+    // console.log(user_token);
     // console.log('uid', user_token.uid);
     // console.log('office', user_token.office);
 
     const id = req.params.id;
 
-    const { rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-        working_from, contact, blood_group, dob, gender, bp, height,
-        weight, is_active } = req.body;
+    const { address, arrested, case_id, country, dob, duration, faisala_date,
+        faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+        office_id, prisioner_type, punarabedan, release_date, total_duration } = req.body;
     console.log("Check Data:", id);
 
     //Input Validation
-    if (!id || !pmis || !sanket) {
-        return res.status(400).json({
+    if (parseInt(office_id, 10) !== parseInt(userToken.office, 10)) {
+        return res.status(403).json({
             Status: false,
-            Error: 'Invalid input, All fields are required.',
+            Error: 'Unauthorized: Invalid office ID.',
         });
     }
 
-    const sql = `UPDATE sec_employe 
+    const sql = `UPDATE prisioners_info 
                 SET
-                rank_id=?, name_np=?, name_en=?, address=?, darbandi=?, pmis=?, sanket=?,
-                working_from=?, contact=?, blood_group=?, dob=?, gender=?, bp=?, height=?,
-                weight=?, is_active=?, updated_by=?, updated_at=? WHERE id=?`
-    const values = [rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-        working_from, contact, blood_group, dob, gender, bp, height,
-        weight, is_active, user_token.uid, new Date(), id
-    ];
+                address=?, arrested=?, case_id=?, country=?, dob=?, duration=?, faisala_date=?,
+                faisala_office=?, fine=?, fine_duration=?, gender=?, jaherwala=?, name_en=?, name_np=?,
+                office_id=?, prisioner_type=?, punarabedan=?, release_date=?, total_duration=?,
+                updated_by=?, updated_at=? WHERE id=?`;
+    const values = [address, arrested, case_id, country, dob, duration, faisala_date,
+                    faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+                    office_id, prisioner_type, punarabedan, release_date, total_duration,
+                    userToken.uid, new Date(), id
+                ];
     console.log(values);
 
     try {
         const result = await query(sql, values);
         return res.status(201).json({
             Status: true,
-            Message: 'Data added successfully.',
+            Message: 'Data updated successfully.',
             Result: result,
         });
     } catch (err) {
