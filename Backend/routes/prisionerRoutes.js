@@ -178,7 +178,35 @@ router.delete('/delete_police/:id', async (req, res) => {
     }
 });
 
+router.get('/get_report', async (req, res) => {
+    // console.log('Rank working');
+    const sql = `SELECT 
+                c.name_np AS CaseNameNP,
+                c.name_en AS CaseNameEN,
+                COUNT(*) AS Total,
+                
+                -- Permanent Male and Female
+                SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
+                SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
+                
+                -- Non-Permanent Male and Female
+                SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
+                SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale
 
+                FROM 
+                    prisioners_info pi
+                    LEFT JOIN cases c ON pi.case_id = c.id
+                GROUP BY 
+                    case_id`;
+
+    try {
+        const result = await query(sql);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 
 
 export { router as prisionerRouter }
