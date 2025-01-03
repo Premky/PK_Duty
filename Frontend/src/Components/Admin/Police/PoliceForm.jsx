@@ -284,14 +284,33 @@ const PoliceForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="dob" label="जन्म मिति"
-                                            {...register('dob', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.dob}
-                                        />
+                                <FormControl sx={{ m: .5, minWidth: 215 }}>
+                                        <div className="col-xl-3 col-md-4 col-sm-12">
+                                            <label htmlFor="dob">जन्म मिति<span>*</span></label>
+                                            <Controller
+                                                name="dob"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <NepaliDatePicker
+                                                        value={value || ""} // Ensure empty string when no date is selected
+                                                        onChange={(dob) => {
+                                                            onChange(dob); // Update form state
+                                                            // setArrestedDate(arrested); // Update state
+                                                            // calculate_duration(arrested, '1999-01-01'); // Trigger duration calculation
+                                                        }}
+                                                        onBlur={onBlur} // Handle blur
+                                                        dateFormat="YYYY-MM-DD" // Customize your date format
+                                                        placeholder="Select Nepali Date"
+                                                        ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            />
+                                            {errors.dob && <span style={{ color: 'red' }}>{errors.dob.message}</span>}
+                                        </div>
                                     </FormControl>
+                                    
+                                    
                                 </Grid>
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
