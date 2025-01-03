@@ -152,8 +152,8 @@ const CountReport = () => {
                                 <TableCell align='center'>{totals.KaidiTotal}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaTotal}</TableCell>
                                 <TableCell align='center'>{totals.KaidiMale}</TableCell>
-                                <TableCell align='center'>{totals.KaidiFemale}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaMale}</TableCell>
+                                <TableCell align='center'>{totals.KaidiFemale}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaFemale}</TableCell>
                                 <TableCell align='center'>{totals.KaidiAgeAbove65}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaAgeAbove65}</TableCell>
