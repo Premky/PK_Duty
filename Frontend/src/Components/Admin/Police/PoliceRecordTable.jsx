@@ -19,7 +19,7 @@ const PoliceRecordsTable = ({ records, onEdit, onDelete }) => {
                 <TableBody>
                     {records.map((record) => (
                         <TableRow key={record.id}>
-                            <TableCell>{record.rank_np}</TableCell>
+                            <TableCell>{record.ranknp}</TableCell>
                             <TableCell>{record.name_np}</TableCell>
                             <TableCell>{record.name_en}</TableCell>
                             <TableCell>{record.address}</TableCell>

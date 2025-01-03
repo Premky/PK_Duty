@@ -27,9 +27,10 @@ router.post('/add_police', verifyToken, async (req, res) => {
     console.log('office', user_token.office);
 
     const { rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-        working_from, contact, blood_group, dob, gender, bp, height,
+         contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
+         gender, bp, height,
         weight, is_active } = req.body;
-    console.log("Check Data:", pmis, sanket);
+    console.log("Check Data:", req.body);
 
     //Input Validation
     if (!pmis || !sanket) {
@@ -38,11 +39,13 @@ router.post('/add_police', verifyToken, async (req, res) => {
             Error: 'Invalid input, All fields are required.',
         });
     }
-    const sql = `INSERT INTO sec_employe(rank_id, name_np, name_en, address, darbandi, pmis, sanket, working_from, 
-    contact, blood_group, dob, gender, bp, height, weight, is_active, office_id, created_by, created_at) VALUES (?)`;
+    const sql = `INSERT INTO sec_employe(rank_id, name_np, name_en, address, darbandi, pmis, sanket,  
+    contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
+    gender, bp, height, weight, is_active, office_id, created_by, created_at) VALUES (?)`;
 
     const values = [rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-        working_from, contact, blood_group, dob, gender, bp, height,
+         contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
+         gender, bp, height,
         weight, is_active, user_token.office, user_token.uid, new Date()
     ];
     console.log(values);
@@ -66,7 +69,10 @@ router.post('/add_police', verifyToken, async (req, res) => {
 //Get Police Records
 router.get('/get_police_records', async (req, res) => {
     // console.log('Rank working');
-    const sql = `SELECT * FROM sec_employe ORDER BY id`;
+    const sql = `SELECT se.*, r.rank_np as ranknp, r.rank_en as ranken
+                    FROM sec_employe se 
+                    LEFT JOIN sec_ranks r ON se.rank_id = r.id                    
+                    ORDER BY se.id`;
     try {
         const result = await query(sql);
         return res.json({ Status: true, Result: result })

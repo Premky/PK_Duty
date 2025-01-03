@@ -3,6 +3,7 @@ import axios from 'axios'
 import React, { useEffect, useState, useTransition } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
+import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import NepaliDate from 'nepali-datetime'
 // import Select from 'react-select';
 import {
@@ -21,12 +22,13 @@ import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
 
 const PoliceForm = () => {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem('token');
+    const navigate = useNavigate();
     const currentofficeid = localStorage.getItem('office_id')
     const currentofficenp = localStorage.getItem('office_np')
     console.log(currentofficeid, currentofficenp);
 
-    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    const navigate = useNavigate();
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
     const { register, handleSubmit, reset, setValue, formState: { errors }, control } = useForm();
@@ -58,12 +60,12 @@ const PoliceForm = () => {
     const onFormSubmit = async (data) => {
         // setLoading(true);
         startTransition(async () => {
-            // console.log(data)
+            console.log(data)
             try {
-                // const formData = new FormData();
+                const formData = new FormData();
                 const url = editing ? `${BASE_URL}/police/update_police/${currentData.id}` : `${BASE_URL}/police/add_police`;
                 const method = editing ? 'PUT' : 'POST';
-                const result = await axios({ method, url, data, withCredentials: true })
+                const result = await axios({ method, url, data, headers: { Authorization: `Bearer ${token}` }, withCredentials: true })
 
                 if (result.data.Status) {
                     alert(`Record ${editing ? 'updated' : 'added'} ${result.data.id} successfully!`);
@@ -105,10 +107,13 @@ const PoliceForm = () => {
         setValue('darbandi', record.darbandi);
         setValue('pmis', record.pmis);
         setValue('sanket', record.sanket);
-        setValue('working_from', record.working_from);
         setValue('contact', record.contact);
         setValue('blood_group', record.blood_group);
         setValue('dob', record.dob);
+        setValue('working_from', record.working_from);
+        setValue('recruit_date', record.recruit_date);
+        setValue('promotion_date', record.promotion_date);
+        setValue('qualification', record.qualification);
         setValue('gender', record.gender);
         setValue('bp', record.bp);
         setValue('height', record.height);
@@ -238,17 +243,6 @@ const PoliceForm = () => {
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }} >
-                                        <TextField id="working_from" label="कार्यरत मिती"
-                                            {...register('working_from', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.working_from}
-                                        />
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} sm={8} md={6} xl={3}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} >
                                         <TextField id="contact" label="सम्पर्क नं."
                                             {...register('contact', { required: "This field is required." })}
                                             fullWidth
@@ -265,17 +259,6 @@ const PoliceForm = () => {
                                             fullWidth
                                             margin="normal"
                                             error={!!errors.blood_group}
-                                        />
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} sm={8} md={6} xl={3}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="dob" label="जन्म मिति"
-                                            {...register('dob', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.dob}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -300,18 +283,113 @@ const PoliceForm = () => {
                                     </FormControl>
                                 </Grid>
 
-
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="bp" label="ब्लड प्रेसर"
-                                            {...register('bp')}
+                                        <TextField id="dob" label="जन्म मिति"
+                                            {...register('dob', { required: "This field is required." })}
                                             fullWidth
                                             margin="normal"
-                                            error={!!errors.bp}
+                                            error={!!errors.dob}
                                         />
                                     </FormControl>
                                 </Grid>
 
+                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                   
+                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
+                                        <div className="col-xl-3 col-md-4 col-sm-12">
+                                            <label htmlFor="working_from">कार्यरत मिती<span>*</span></label>
+                                            <Controller
+                                                name="working_from"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <NepaliDatePicker
+                                                        value={value || ""} // Ensure empty string when no date is selected
+                                                        onChange={(working_from) => {
+                                                            onChange(working_from); // Update form state
+                                                            // setArrestedDate(arrested); // Update state
+                                                            // calculate_duration(arrested, '1999-01-01'); // Trigger duration calculation
+                                                        }}
+                                                        onBlur={onBlur} // Handle blur
+                                                        dateFormat="YYYY-MM-DD" // Customize your date format
+                                                        placeholder="Select Nepali Date"
+                                                        ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            />
+                                            {errors.working_from && <span style={{ color: 'red' }}>{errors.working_from.message}</span>}
+                                        </div>
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
+                                        <div className="col-xl-3 col-md-4 col-sm-12">
+                                            <label htmlFor="recruit_date">भर्ना मिति<span>*</span></label>
+                                            <Controller
+                                                name="recruit_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <NepaliDatePicker
+                                                        value={value || ""} // Ensure empty string when no date is selected
+                                                        onChange={(recruit_date) => {
+                                                            onChange(recruit_date); // Update form state
+                                                            // setArrestedDate(arrested); // Update state
+                                                            // calculate_duration(arrested, '1999-01-01'); // Trigger duration calculation
+                                                        }}
+                                                        onBlur={onBlur} // Handle blur
+                                                        dateFormat="YYYY-MM-DD" // Customize your date format
+                                                        placeholder="Select Nepali Date"
+                                                        ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            />
+                                            {errors.recruit_date && <span style={{ color: 'red' }}>{errors.recruit_date.message}</span>}
+                                        </div>
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
+                                        <div className="col-xl-3 col-md-4 col-sm-12">
+                                            <label htmlFor="promotion_date">बढुवा मिति<span>*</span></label>
+                                            <Controller
+                                                name="promotion_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <NepaliDatePicker
+                                                        value={value || ""} // Ensure empty string when no date is selected
+                                                        onChange={(promotion_date) => {
+                                                            onChange(promotion_date); // Update form state
+                                                            // setArrestedDate(arrested); // Update state
+                                                            // calculate_duration(arrested, '1999-01-01'); // Trigger duration calculation
+                                                        }}
+                                                        onBlur={onBlur} // Handle blur
+                                                        dateFormat="YYYY-MM-DD" // Customize your date format
+                                                        placeholder="Select Nepali Date"
+                                                        ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            />
+                                            {errors.promotion_date && <span style={{ color: 'red' }}>{errors.promotion_date.message}</span>}
+                                        </div>
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
+                                        <TextField id="qualification" label="शैक्षिक योग्यता"
+                                            {...register('qualification')}
+                                            fullWidth
+                                            margin="normal"
+                                            error={!!errors.qualification}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
                                         <TextField id="height" label="उचाई(Height)"
