@@ -37,6 +37,7 @@ const PoliceForm = () => {
     const [isLoading, startTransition] = useTransition();
     const [editing, setEditing] = useState(false);
     const [ranks, setRanks] = useState([]);
+    const [blood, setBlood] = useState([]);
     const [selectedRank, setSelectedRank] = useState('');
 
     const [records, setRecords] = useState([]); //Holds the records added or fetched for editing;
@@ -48,6 +49,22 @@ const PoliceForm = () => {
 
             if (Status && Result?.length > 0) {
                 setRanks(Result);
+            } else {
+                alert(Error || 'Failed to fetch news data.');
+            }
+        } catch (error) {
+            console.error('Error fetching delete news:', error);
+            alert('An error occurred while fetching news data. Please try again.');
+        }
+    };
+
+    const fetchBlood = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/common/get_blood_group`);
+            const { Status, Result, Error } = response.data;
+
+            if (Status && Result?.length > 0) {
+                setBlood(Result);
             } else {
                 alert(Error || 'Failed to fetch news data.');
             }
@@ -138,6 +155,7 @@ const PoliceForm = () => {
         // handleLogin();
         fetchRank();
         fetchRecords();
+        fetchBlood();
     }, [])
 
     // const actionRank = useActionState(fetchRank);
@@ -253,14 +271,26 @@ const PoliceForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="blood_group" label="रक्त समूह"
+                                <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
+                                        <InputLabel id="blood_group">रक्त समुह</InputLabel>
+                                        <Select
+                                            labelId="blood_group-label"
+                                            id="blood_group"
+                                            // value={selectedRank}
                                             {...register('blood_group', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.blood_group}
-                                        />
+                                            // onChange={(e) => setSelectedRank(e.target.value)}
+                                            autoWidth
+                                            label="रक्त समुह"
+                                        >
+                                            <MenuItem value="" disabled><em>दर्जा</em></MenuItem>
+                                            {blood.map((data) => (
+                                                <MenuItem value={data.id} key={data.id}>{data.blood_group}</MenuItem>
+                                            ))}
+                                        </Select>
+                                        {/* {errors.rank && <p style={{ color: 'red' }}>{errors.rank.message}</p>} Display validation error */}
                                     </FormControl>
+
+                                    
                                 </Grid>
 
                                 <Grid item xs={12} sm={4} md={3} mt={2}>

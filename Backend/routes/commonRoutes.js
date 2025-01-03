@@ -173,4 +173,17 @@ router.get('/get_admin_office', async (req, res) => {
         res.status(500).json({ Status: false, Error: "Internal Server Error" });
     }
 });
+
+router.get('/get_blood_group', async (req, res) => {
+    // console.log('Case working');
+    
+    const sql = `SELECT * FROM blood_group ORDER BY id`;
+    try {
+        const result = await query(sql,false);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 export { router as commonRouter }
