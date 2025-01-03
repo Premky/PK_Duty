@@ -373,7 +373,7 @@ const PoliceForm = () => {
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="promotion_date">बढुवा मिति<span>*</span></label>
+                                            <label htmlFor="promotion_date">बढुवा मिति<span>(Optional)</span></label>
                                             <Controller
                                                 name="promotion_date"
                                                 control={control}
@@ -400,7 +400,7 @@ const PoliceForm = () => {
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="qualification" label="शैक्षिक योग्यता"
+                                        <TextField id="qualification" label="शैक्षिक योग्यता(Optional)"
                                             {...register('qualification')}
                                             fullWidth
                                             margin="normal"
@@ -411,7 +411,7 @@ const PoliceForm = () => {
                                 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="height" label="उचाई(Height)"
+                                        <TextField id="height" label="उचाई(Height)(Optional)"
                                             {...register('height')}
                                             fullWidth
                                             margin="normal"
@@ -422,7 +422,7 @@ const PoliceForm = () => {
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }}>
-                                        <TextField id="weight" label="तौल(Weight)"
+                                        <TextField id="weight" label="तौल(Weight)(Optional)"
                                             {...register('weight')}
                                             fullWidth
                                             margin="normal"
