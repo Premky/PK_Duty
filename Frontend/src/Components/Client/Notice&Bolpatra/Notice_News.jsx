@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import Icon from '../../Icon';
-import CustomModal from '../../Utils/CustomModal';
+// import Icon from '../../Icon';
+// import CustomModal from '../../Utils/CustomModal';
 import { Link } from 'react-router-dom';
 
 const Notice_News = () => {

@@ -17,9 +17,10 @@ const query = promisify(con.query).bind(con);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const current_date = new NepaliDate().format('YYYY-MM-DD');
 const fy = new NepaliDate().format('YYYY'); //Support for filter
 const fy_date = fy + '-4-1'
-// console.log(fy_date);
+// console.log(current_date);
 
 router.post('/add_prisioner', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
@@ -81,6 +82,29 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
     }
 });
 
+//Get Individual Records
+router.get('/get_prisioners/:id', async (req, res) => {
+    const id = req.params.id;
+    const userToken = req.user; // Details from token, 
+    // console.log(user_token);
+    // console.log('uid', user_token.uid);
+    // console.log('office', user_token.office);
+    // console.log('Rank working');
+    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
+                FROM prisioners_info pi
+                LEFT JOIN cases c ON pi.case_id = c.id
+                WHERE pi.id =?
+                `;
+
+    try {
+        const result = await query(sql, id);
+        // console.log(result)
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 
 //Get Police Records
 router.get('/get_prisioners', async (req, res) => {
@@ -127,10 +151,10 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
                 office_id=?, prisioner_type=?, punarabedan=?, release_date=?, total_duration=?,
                 updated_by=?, updated_at=? WHERE id=?`;
     const values = [address, arrested, case_id, country, dob, duration, faisala_date,
-                    faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
-                    office_id, prisioner_type, punarabedan, release_date, total_duration,
-                    userToken.uid, new Date(), id
-                ];
+        faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+        office_id, prisioner_type, punarabedan, release_date, total_duration,
+        userToken.uid, new Date(), id
+    ];
     console.log(values);
 
     try {
@@ -182,30 +206,39 @@ router.get('/get_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     // console.log('User ID:', userToken.uid);
     // console.log('Office ID:', userToken.office);
-
+    // console.log(current_date)
     const sql = `SELECT 
                 c.name_np AS CaseNameNP,
-                c.name_en AS CaseNameEN,
+                c.name_en AS CaseNameEN,                    
                 COUNT(*) AS Total,
                 
-                -- Permanent Male and Female
+                -- Kaidi Total, Male and Female
+                SUM(CASE WHEN prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
                 SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
                 SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
+                SUM(CASE WHEN prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
                 
-                -- Non-Permanent Male and Female
+                -- Thunuwa Total, Male and Female
+                SUM(CASE WHEN prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
                 SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
-                SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale
+                SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
+                SUM(CASE WHEN prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, ${current_date}) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
 
-                FROM 
-                    prisioners_info pi
-                    LEFT JOIN cases c ON pi.case_id = c.id   
-                WHERE 
-                    pi.office_id = ?          
-                GROUP BY 
-                    case_id`;
+                -- Nabalik_Nabalika
+                SUM(CASE WHEN gender = 'M' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) < 18 THEN 1 ELSE 0 END) AS Nabalak,
+                SUM(CASE WHEN gender = 'F' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) < 18 THEN 1 ELSE 0 END) AS Nabalika
+            FROM 
+                prisioners_info pi
+                LEFT JOIN cases c ON pi.case_id = c.id   
+            WHERE 
+                pi.office_id = ?                     
+            GROUP BY 
+                case_id;
+            `;
 
     try {
         const result = await query(sql, userToken.office);
+
         return res.json({ Status: true, Result: result })
     } catch (err) {
         console.error("Database Query Error:", err);

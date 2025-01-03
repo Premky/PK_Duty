@@ -70,25 +70,15 @@ const CountReport = () => {
     };
 
     const calculateTotals = (data) => {
-        console.log(data)
         const totals = data.reduce(
             (acc, record) => ({
-                KaidiTotal: parseInt(acc.KaidiTotal) + parseInt(record.KaidiTotal),
-                ThunuwaTotal: parseInt(acc.ThunuwaTotal) + parseInt(record.ThunuwaTotal),
                 KaidiMale: parseInt(acc.KaidiMale) + parseInt(record.KaidiMale),
                 KaidiFemale: parseInt(acc.KaidiFemale) + parseInt(record.KaidiFemale),
                 ThunuwaMale: parseInt(acc.ThunuwaMale) + parseInt(record.ThunuwaMale),
                 ThunuwaFemale: parseInt(acc.ThunuwaFemale) + parseInt(record.ThunuwaFemale),
-                KaidiAgeAbove65: parseInt(acc.KaidiAgeAbove65) + parseInt(record.KaidiAgeAbove65),
-                ThunuwaAgeAbove65: parseInt(acc.ThunuwaAgeAbove65) + parseInt(record.ThunuwaAgeAbove65),
-                Nabalak: parseInt(acc.Nabalak) + parseInt(record.Nabalak),
-                Nabalika: parseInt(acc.Nabalika) + parseInt(record.Nabalak),
                 Total: parseInt(acc.Total) + parseInt(record.Total),
             }),
-            {
-                KaidiTotal: 0, ThunuwaTotal: 0, KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0,
-                KaidiAgeAbove65: 0, ThunuwaAgeAbove65: 0, Nabalak:0, Nabalika:0, Total: 0
-            }
+            { KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0, Total: 0 }
         );
         setTotals(totals);
     };
@@ -104,27 +94,20 @@ const CountReport = () => {
             </div>
             <div className="report_data">
                 <TableContainer component={Paper} sx={{ mt: 4 }}>
-                    <Table size='small'>
+                    <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center" rowSpan={2}>सि.नं.</TableCell>
                                 <TableCell align="center" rowSpan={2}>मुद्दा</TableCell>
-                                <TableCell align="center" colSpan={2}>जम्मा</TableCell>
-                                <TableCell align="center" colSpan={2}>पुरुष</TableCell>
-                                <TableCell align="center" colSpan={2}>महिला</TableCell>
-                                <TableCell align="center" colSpan={2}>६५ वर्ष माथिका</TableCell>
-                                <TableCell align="center" colSpan={2}>नाबालक/आश्रीत</TableCell>
-                                <TableCell align="center">कैफियत</TableCell>
+                                <TableCell align="center" rowSpan={2}>जम्मा</TableCell>
+                                <TableCell align="center" colSpan={2}>कैदी</TableCell>
+                                <TableCell align="center" colSpan={2}>थुनुवा</TableCell>
+                                <TableCell align="center" rowSpan={2}>ठेगाना</TableCell>
+                                <TableCell align="center" rowSpan={2}>उमेर</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell align="center">कैदी</TableCell>
-                                <TableCell align="center">थुनुवा</TableCell>
-                                <TableCell align="center">कैदी</TableCell>
-                                <TableCell align="center">थुनुवा</TableCell>
-                                <TableCell align="center">कैदी</TableCell>
-                                <TableCell align="center">थुनुवा</TableCell>
-                                <TableCell align="center">कैदी</TableCell>
-                                <TableCell align="center">थुनुवा</TableCell>
+                                <TableCell align="center">पुरुष</TableCell>
+                                <TableCell align="center">महिला</TableCell>
                                 <TableCell align="center">पुरुष</TableCell>
                                 <TableCell align="center">महिला</TableCell>
                             </TableRow>
@@ -135,30 +118,24 @@ const CountReport = () => {
                                 <TableRow key={record.id}>
                                     <TableCell align='center'>{index + 1}</TableCell>
                                     <TableCell>{record.CaseNameNP}</TableCell>
-                                    <TableCell align='center'>{record.KaidiTotal}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaTotal}</TableCell>
+                                    <TableCell align='center'>{record.Total}</TableCell>
                                     <TableCell align='center'>{record.KaidiMale}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaMale}</TableCell>
                                     <TableCell align='center'>{record.KaidiFemale}</TableCell>
+                                    <TableCell align='center'>{record.ThunuwaMale}</TableCell>
                                     <TableCell align='center'>{record.ThunuwaFemale}</TableCell>
-                                    <TableCell align='center'>{record.KaidiAgeAbove65}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaAgeAbove65}</TableCell>
-                                    <TableCell align='center'>{record.Nabalak}</TableCell>
-                                    <TableCell align='center'>{record.Nabalika}</TableCell>
+                                    <TableCell align='center'>{record.address}</TableCell>
+                                    <TableCell align='center'>{record.age}</TableCell>
                                 </TableRow>
                             ))}
                             <TableRow key='total' >
                                 <TableCell colSpan={2}>जम्मा</TableCell>
-                                <TableCell align='center'>{totals.KaidiTotal}</TableCell>
-                                <TableCell align='center'>{totals.ThunuwaTotal}</TableCell>
+                                <TableCell align='center'>{totals.Total}</TableCell>
                                 <TableCell align='center'>{totals.KaidiMale}</TableCell>
                                 <TableCell align='center'>{totals.KaidiFemale}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaMale}</TableCell>
                                 <TableCell align='center'>{totals.ThunuwaFemale}</TableCell>
-                                <TableCell align='center'>{totals.KaidiAgeAbove65}</TableCell>
-                                <TableCell align='center'>{totals.ThunuwaAgeAbove65}</TableCell>
-                                <TableCell align='center'>{totals.Nabalak}</TableCell>
-                                <TableCell align='center'>{totals.Nabalika}</TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

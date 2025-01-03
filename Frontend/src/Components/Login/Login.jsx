@@ -40,7 +40,7 @@ const Login = (onLogin) => {
             case 'सुपरएडमिन':
                 return '/superadmin';
             case 'प्रहरी':
-                return '/cases';
+                return '/police';
             case 'प्रशासन':
                 return '/prisioner';
             default:

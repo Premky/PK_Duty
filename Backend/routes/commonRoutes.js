@@ -139,7 +139,7 @@ router.delete('/delete_case/:id', async (req, res) => {
 
 router.get('/get_countries', async (req, res) => {
     // console.log('Case working');
-    const sql = `SELECT * FROM np_country ORDER BY id`;
+    const sql = `SELECT * FROM np_country ORDER BY name_np`;
     try {
         const result = await query(sql);
         return res.json({ Status: true, Result: result })
@@ -163,9 +163,10 @@ router.get('/get_juidicialbody', async (req, res) => {
 
 router.get('/get_admin_office', async (req, res) => {
     // console.log('Case working');
-    const sql = `SELECT * FROM office ORDER BY id`;
+    
+    const sql = `SELECT * FROM office WHERE is_police=? ORDER BY id`;
     try {
-        const result = await query(sql);
+        const result = await query(sql,false);
         return res.json({ Status: true, Result: result })
     } catch (err) {
         console.error("Database Query Error:", err);
