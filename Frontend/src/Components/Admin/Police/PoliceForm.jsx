@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import NepaliDate from 'nepali-datetime'
+
 // import Select from 'react-select';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button,
@@ -150,6 +151,7 @@ const PoliceForm = () => {
             alert('Failed to delete record.');
         }
     };
+
 
     useEffect(() => {
         // handleLogin();

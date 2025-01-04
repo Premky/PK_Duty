@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import axios from 'axios'
 import React, { useEffect, useState, useTransition } from 'react'
-import {Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import "nepali-datepicker-reactjs/dist/index.css"
@@ -19,7 +19,7 @@ import Box from '@mui/material/Box';
 
 import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
-
+import * as XLSX from 'xlsx';
 const CountPoliceReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem('token');
@@ -36,7 +36,7 @@ const CountPoliceReport = () => {
         defaultValues: {
             startDate: formatteddatebefore7days,
             endDate: formattedDateNp
-    },
+        },
     });
 
     const [currentData, setCurrentData] = useState();
@@ -51,30 +51,33 @@ const CountPoliceReport = () => {
         Total: 0,
     });
 
+    const [start_Date, setStart_Date]=useState(formatteddatebefore7days);
+    const [end_Date, setEnd_Date] = useState(formattedDateNp);
+
     const fetchRecords = async (data) => {
         // if (!data) { data = nul`l }
-        console.log(data)
+        // console.log(data)
         try {
             const url = `${BASE_URL}/common/get_prisioners_report`;
 
             const queryParams = new URLSearchParams({
-                startDate: data?.startDate||formatteddatebefore7days,
-                endDate:data?.endDate || formattedDateNp,
+                startDate: data?.startDate || formatteddatebefore7days,
+                endDate: data?.endDate || formattedDateNp,
             }).toString();
 
             const fullUrl = `${url}?${queryParams}`;
 
-            const response = await axios.get(fullUrl,{
+            const response = await axios.get(fullUrl, {
                 headers: { Authorization: `Bearer ${token}` },
                 withCredentials: true, // If cookies are required
-            });            
+            });
 
             const { Status, Result, Error } = response.data;
 
             if (Status) {
                 if (Result?.length > 0) {
                     setRecords(Result); //Set the fetched Records
-                    console.log(Result);
+                    // console.log(Result);
                     calculateTotals(Result);
                 } else {
                     console.log("No Record Found")
@@ -88,10 +91,10 @@ const CountPoliceReport = () => {
             alert('An error occured while fetching records.');
         }
     };
-    
+
 
     const calculateTotals = (data) => {
-        console.log(data)
+        // console.log(data)
         const totals = data.reduce(
             (acc, record) => ({
                 KaidiTotal: parseInt(acc.KaidiTotal) + parseInt(record.KaidiTotal),
@@ -114,13 +117,132 @@ const CountPoliceReport = () => {
         setTotals(totals);
     };
 
+
+    const exportToExcel1 = () => {
+        const worksheet = XLSX.utils.json_to_sheet(records);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisioner Records');
+        XLSX.writeFile(workbook, 'prisioner_records.xlsx');
+    };
+
+    const exportToExcel2 = () => {
+        const headers = ['सि.नं.', 'मुद्दाको विवरण', 'जम्मा कैदी', 'जम्मा बन्दी','कैदी पुरुष','बन्दी पुरुष',
+            'कैदी महिला','बन्दी महिला', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
+
+        const formattedData = records.map(record => ({
+            'सि.नं.': record.id,
+            'मुद्दाको विवरण': record.CaseNameNP,
+            'जम्मा कैदी': record.KaidiTotal,
+            'जम्मा बन्दी': record.ThunuwaTotal,
+            // 'जम्मा कैदीबन्दी':parseInt(record.ThunuwaTotal) + parseInt(record.KaidiTotal), 
+            'कैदी पुरुष': record.KaidiMale,
+            'बन्दी पुरुष': record.ThunuwaMale,
+            'कैदी महिला': record.KaidiFemale,
+            'बन्दी महिला': record.ThunuwaFemale,
+            'आएको संख्या': record.TotalArrestedInDateRange,
+            'छुटेको संख्या': record.TotalReleasedInDateRange,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(formattedData, { header: headers });
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisioner Records');
+
+        // Apply cell styles (e.g., bold headers)
+        const range = XLSX.utils.decode_range(worksheet['!ref']);
+        for (let col = range.s.c; col <= range.e.c; col++) {
+            const headerCell = worksheet[XLSX.utils.encode_cell({ r: 0, c: col })];
+            if (headerCell) {
+                headerCell.s = { font: { bold: true } }; // Make header bold
+            }
+        }
+
+        XLSX.writeFile(workbook, 'prisioner_records.xlsx');
+    };
+
+    const exportToExcel = () => {
+        // Headers for the Excel sheet
+        const headers = [
+            [`मिति ${start_Date} गतेबाट ${end_Date} सम्म कारागार कार्यालय संखुवासभामा रहेका कैदीबन्दीहरुको मुद्दागत जाहेरी`],
+            ['सि.नं.', 'मुद्दा', '', 'जम्मा', '', '', 'कैदी', '', '','थुनुवा', '', '', '', ''],
+            ['', '', 'कैदी', 'थुनुवा', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
+        ];
+
+        // Data for the rows
+        const formattedData = records.map((record, index) => [
+            index + 1,
+            record.CaseNameNP,
+            record.KaidiTotal,
+            record.ThunuwaTotal,
+            parseInt(record.KaidiTotal) + parseInt(record.ThunuwaTotal),
+            record.KaidiMale,
+            record.KaidiFemale,
+            parseInt(record.KaidiMale) + parseInt(record.KaidiFemale),
+            record.ThunuwaMale,
+            record.ThunuwaFemale,
+            parseInt(record.ThunuwaMale) + parseInt(record.ThunuwaFemale),
+            record.TotalArrestedInDateRange,
+            record.TotalReleasedInDateRange,
+            record.Remarks
+        ]);
+
+        // Adding the totals row
+        const totalsRow = [
+            'जम्मा',
+            '',
+            totals.KaidiTotal,
+            totals.ThunuwaTotal,
+            totals.KaidiTotal + totals.ThunuwaTotal,
+            totals.KaidiMale,
+            totals.KaidiFemale,
+            totals.KaidiMale + totals.KaidiFemale,
+            totals.ThunuwaMale,
+            totals.ThunuwaFemale,
+            totals.ThunuwaMale + totals.ThunuwaFemale,
+            totals.KaidiAgeAbove65,
+            totals.ThunuwaAgeAbove65
+        ];
+        formattedData.push(totalsRow);
+
+        const otherdetails=[
+            '', `मितिः ${formattedDateNp} गते ।`, '', '', '', '', '', '', '', '', 'तुलसी राम राई'
+        ]
+        formattedData.push(otherdetails);
+        const otherdetails2=[
+            '', '', '', '', '', '', '', '', '', '', 'प्रहरी सहायक निरिक्षक'
+        ]
+        formattedData.push(otherdetails2);
+
+        // Create a worksheet and a workbook
+        const worksheet = XLSX.utils.aoa_to_sheet([ ...headers, ...formattedData ]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisoner Records');
+
+        // Apply styling (e.g., bold headers, background color)
+        const range = XLSX.utils.decode_range(worksheet['!ref']);
+        for (let col = range.s.c; col <= range.e.c; col++) {
+            const headerCell = worksheet[XLSX.utils.encode_cell({ r: 0, c: col })];
+            if (headerCell) {
+                headerCell.s = { font: { bold: true }, fill: { fgColor: { rgb: 'D9EAD3' } } };
+            }
+        }
+
+        // worksheet['!merges'] = [
+        //     { s: { r: 1, c: 2 }, e: { r: 1, c: 4 } }, // Merge cells for "जम्मा"
+        //     { s: { r: 1, c: 5 }, e: { r: 1, c: 7 } }, // Merge cells for "कैदी"
+        //     { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }, // Merge cells for "थुनुवा"
+        // ];
+
+        // Trigger download as an Excel file
+        XLSX.writeFile(workbook, 'prisoner_records.xlsx');
+    };
+
     useEffect(() => {
         fetchRecords();
     }, [])
 
     return (
         <>
-        <Link to = '/police'>Police Form</Link>
+            <Link to='/police'>Police Form</Link>
             <div className="report_title text-center bg-info bg-gradient p-2">
                 संख्यात्मक विवरण
             </div>
@@ -136,7 +258,8 @@ const CountPoliceReport = () => {
                                 <NepaliDatePicker
                                     value={value || startDate}
                                     onChange={(startDate) => {
-                                        onChange(startDate);                                        
+                                        onChange(startDate);
+                                        setStart_Date(startDate);
                                     }}
                                     onBlur={onBlur}
                                     dateFormat="YYYY-MM-DD"
@@ -158,7 +281,8 @@ const CountPoliceReport = () => {
                                 <NepaliDatePicker
                                     value={value || endDate}
                                     onChange={(endDate) => {
-                                        onChange(endDate);                                        
+                                        onChange(endDate);
+                                        setEnd_Date(endDate);
                                     }}
                                     onBlur={onBlur}
                                     dateFormat="YYYY-MM-DD"
@@ -176,7 +300,7 @@ const CountPoliceReport = () => {
                         </button>
                     </div>
                 </form>
-
+                <button onClick={exportToExcel}>Export</button>
             </div>
             <div className="report_data">
                 <TableContainer component={Paper} sx={{ mt: 4 }}>
@@ -222,7 +346,7 @@ const CountPoliceReport = () => {
 
                                     <TableCell align='center'>{record.TotalArrestedInDateRange}</TableCell>
                                     <TableCell align='center'>{record.TotalReleasedInDateRange}</TableCell>
-                                    
+
 
                                 </TableRow>
                             ))}
