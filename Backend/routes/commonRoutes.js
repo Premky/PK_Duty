@@ -17,6 +17,7 @@ const query = promisify(con.query).bind(con);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const current_date = new NepaliDate().format('YYYY-MM-DD');
 const fy = new NepaliDate().format('YYYY'); //Support for filter
 const fy_date = fy + '-4-1'
 // console.log(fy_date);
@@ -26,7 +27,7 @@ router.post('/add_case', verifyToken, async (req, res) => {
     console.log('uid', user_token.uid);
     console.log('office', user_token.office);
 
-    const {name_np, name_en,} = req.body;
+    const { name_np, name_en, } = req.body;
     console.log("Check Data:", name_np, name_en);
 
     //Input Validation
@@ -76,7 +77,7 @@ router.put('/update_case/:id', verifyToken, async (req, res) => {
 
     const id = req.params.id;
 
-    const { name_np, name_en} = req.body;
+    const { name_np, name_en } = req.body;
     console.log("Check Data:", id);
 
     //Input Validation
@@ -163,10 +164,10 @@ router.get('/get_juidicialbody', async (req, res) => {
 
 router.get('/get_admin_office', async (req, res) => {
     // console.log('Case working');
-    
+
     const sql = `SELECT * FROM office WHERE is_police=? ORDER BY id`;
     try {
-        const result = await query(sql,false);
+        const result = await query(sql, false);
         return res.json({ Status: true, Result: result })
     } catch (err) {
         console.error("Database Query Error:", err);
@@ -176,14 +177,71 @@ router.get('/get_admin_office', async (req, res) => {
 
 router.get('/get_blood_group', async (req, res) => {
     // console.log('Case working');
-    
+
     const sql = `SELECT * FROM blood_group ORDER BY id`;
     try {
-        const result = await query(sql,false);
+        const result = await query(sql, false);
         return res.json({ Status: true, Result: result })
     } catch (err) {
         console.error("Database Query Error:", err);
         res.status(500).json({ Status: false, Error: "Internal Server Error" });
     }
 });
+
+router.get('/get_prisioners_report', verifyToken, async (req, res) => {
+    const userToken = req.user; // Extract details from the token
+    const { startDate, endDate } = req.query;
+    // console.log(req.query)
+    // console.log('mainoffice', userToken.main_office);    
+    const sql = `SELECT 
+    c.name_np AS CaseNameNP,
+    c.name_en AS CaseNameEN,                    
+    COUNT(*) AS Total,
+
+    -- Kaidi Total, Male and Female
+    SUM(CASE WHEN prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
+    SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
+    SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
+    SUM(CASE WHEN prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
+
+    -- Thunuwa Total, Male and Female
+    SUM(CASE WHEN prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
+    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
+    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
+    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
+
+    -- Nabalik_Nabalika
+    SUM(CASE WHEN gender = 'M' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalak,
+    SUM(CASE WHEN gender = 'F' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalika,
+
+    -- Total within date range (filtered)
+    SUM(CASE WHEN (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
+    SUM(CASE WHEN (STR_TO_DATE(pi.release_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange
+FROM 
+    prisioners_info pi
+    LEFT JOIN cases c ON pi.case_id = c.id   
+WHERE 
+    pi.office_id = ? 
+    GROUP BY 
+    pi.case_id`;
+    // AND 
+    // (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) 
+
+    try {
+        const params = [
+            startDate, endDate, 
+            startDate, endDate, 
+            userToken.main_office, 
+            startDate, endDate
+        ]
+        console.log(params)
+        const result = await query(sql, params);
+
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
+
 export { router as commonRouter }

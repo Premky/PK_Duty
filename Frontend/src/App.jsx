@@ -12,7 +12,8 @@ import PoliceForm from './Components/Admin/Police/PoliceForm';
 import LogoutButton from './Components/Login/Logout';
 import PrisionersForm from './Components/Admin/Prisioners/PrisionersForm';
 import CaseForm from './Components/Admin/OtherRequired/CaseForm';
-import CountReport from './Components/Admin/Prisioners/CountReport';
+import CountPrisionerReport from './Components/Admin/Prisioners/CountReport';
+import CountPoliceReport from './Components/Admin/Police/CountReport';
 import AashritForm from './Components/Admin/Prisioners/AashritForm';
 import PoliceIndexRoute from './Components/Admin/Police/PoliceIndexRoute';
 import PrisionersIndexRoute from './Components/Admin/Prisioners/PrisionersIndexRoute';
@@ -40,14 +41,15 @@ function App() {
 
 
           <Route path='/police' element={<PoliceIndexRoute />}>
-            <Route path='/police' element={<PoliceForm />} />
+            <Route index element={<PoliceForm />} />
+            <Route path='report' element={<CountPoliceReport />} />
           </Route>
 
           <Route path='/prisioner' element={<PrisionersIndexRoute />}>
-            <Route path='/prisioner' element={<PrisionersForm />} />
+            <Route index element={<PrisionersForm />} />
+            <Route path='report' element={<CountPrisionerReport />} />
           </Route>
           {/* Temproary Routes */}
-          <Route path='/prisioner_report' element={<CountReport />} />
           <Route path='/aashrit' element={<AashritForm />} />
 
         </Routes>

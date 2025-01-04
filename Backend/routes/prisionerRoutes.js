@@ -30,7 +30,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
     // Destructuring the data from the request body
     const {
         address, arrested, case_id, country, dob, duration, faisala_date,
-        faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+        faisala_office, fine, fine_duration, gender, jaherwala, karagar_date, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration
     } = req.body;
 
@@ -48,7 +48,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
     const sql = `
         INSERT INTO prisioners_info (
             address, arrested, case_id, country, dob, duration, faisala_date,
-            faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+            faisala_office, fine, fine_duration, gender, jaherwala, karagar_date, name_en, name_np,
             office_id, prisioner_type, punarabedan, release_date, total_duration, created_by, created_at
         ) VALUES (?)
     `;
@@ -56,7 +56,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
     // Values for the query, including additional metadata
     const values = [
         address, arrested, case_id, country, dob, duration, faisala_date,
-        faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
+        faisala_office, fine, fine_duration, gender, jaherwala, karagar_date, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration,
         userToken.uid, new Date() // Metadata: User ID and timestamp
     ];
@@ -204,6 +204,7 @@ router.delete('/delete_police/:id', async (req, res) => {
 
 router.get('/get_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
+    // console.log('mainoffice', userToken.main_office);
     // console.log('User ID:', userToken.uid);
     // console.log('Office ID:', userToken.office);
     // console.log(current_date)
@@ -237,7 +238,7 @@ router.get('/get_report', verifyToken, async (req, res) => {
             `;
 
     try {
-        const result = await query(sql, userToken.office);
+        const result = await query(sql, userToken.main_office);
 
         return res.json({ Status: true, Result: result })
     } catch (err) {

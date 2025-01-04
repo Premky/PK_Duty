@@ -84,7 +84,7 @@ router.get('/get_police_records', async (req, res) => {
 
 router.put('/update_police/:id', verifyToken, async (req, res) => {
     const user_token = req.user; // Details from token, 
-    // console.log('uid', user_token.uid);
+    // console.log('mainoffice', user_token.main_office);
     // console.log('office', user_token.office);
 
     const id = req.params.id;

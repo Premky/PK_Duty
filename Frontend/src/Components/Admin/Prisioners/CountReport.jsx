@@ -18,7 +18,7 @@ import Box from '@mui/material/Box';
 import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
 
-const CountReport = () => {
+const CountPrisionerReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
@@ -168,4 +168,4 @@ const CountReport = () => {
     )
 }
 
-export default CountReport
+export default CountPrisionerReport

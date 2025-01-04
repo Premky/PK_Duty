@@ -29,10 +29,14 @@ const validateLoginInput = (username, password) => {
 
 // SQL query for fetching user details
 const fetchUserQuery = `
-    SELECT DISTINCT u.*, ut.ut_name AS usertype, o.office_np AS office_name, o.office_en AS office_name_en, o.id AS office_id,  b.b_name_np AS branch_name
+    SELECT DISTINCT u.*, ut.ut_name AS usertype, 
+    o.office_np AS office_name, o.office_en AS office_name_en, 
+    om.office_np AS main_office_name, om.office_en AS main_office_name_en,
+    o.id AS office_id,  b.b_name_np AS branch_name
     FROM users u
     LEFT JOIN usertype ut ON u.usertype = ut.id
     LEFT JOIN office o ON u.office_id = o.id
+    LEFT JOIN office om ON u.main_office_id = o.id
     LEFT JOIN branch b ON u.branch_id = b.id
     WHERE u.username = ?;
 `;
@@ -77,6 +81,7 @@ router.post('/login', (req, res) => {
                     role: user.usertype,
                     username: user.username,
                     office: user.office_id,
+                    main_office: user.main_office_id,
                     branch: user.branch
                 },
                     process.env.JWT_SECRET,
@@ -100,6 +105,7 @@ router.post('/login', (req, res) => {
                     usertype: user.usertype,
                     office_np: user.office_name,
                     office_id: user.office_id,
+                    main_office_id: user.main_office_id,
                 });
             });
         });

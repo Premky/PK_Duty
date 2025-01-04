@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import axios from 'axios'
 import React, { useEffect, useState, useTransition } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import NepaliDate from 'nepali-datetime'
@@ -163,6 +163,7 @@ const PoliceForm = () => {
         <React.Fragment>
             <div className="col-12">
                 <div className="d-flex flex-column px-3 pt-0">
+                <Link to="/police/report">Go to Report</Link>
                     <form className="row mt-1 g-3">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={4} >

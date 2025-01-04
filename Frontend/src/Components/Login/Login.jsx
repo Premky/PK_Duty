@@ -76,6 +76,7 @@ const Login = (onLogin) => {
                 localStorage.setItem("branch", response.data.branch);
                 localStorage.setItem("office_np", response.data.office_np);
                 localStorage.setItem("office_id", response.data.office_id);
+                localStorage.setItem("main_office_id", response.data.main_office_id);
 
                 // Determine navigation path based on branch
                 const path = navigateBasedonBranch(response.data.branch);

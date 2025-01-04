@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import axios from 'axios'
 import React, { useEffect, useState, useTransition } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import "nepali-datepicker-reactjs/dist/index.css"
@@ -55,6 +55,7 @@ const PrisionersForm = () => {
     const [punarabedan, setPunrabedan] = useState(0);
 
     const [arrestedDate, setArrestedDate] = useState("");
+    const [karagarDate, setKaragarDate] = useState("");
     const [releaseDate, setReleaseDate] = useState("");
     const [duration, setDuration] = useState(0);
     const [fine, setFine] = useState(0);
@@ -250,6 +251,7 @@ const PrisionersForm = () => {
         setValue('address', record.address);
         setValue('gender', record.gender);
         setValue('dob', record.dob);
+        setValue('karagar_date,', record.karagar_date,);
         setValue('arrested', record.arrested);
         setValue('release_date', record.release_date);
         setValue('faisala_office', record.faisala_office);
@@ -289,6 +291,7 @@ const PrisionersForm = () => {
         <React.Fragment>
             <div className="col-12">
                 <div className="d-flex flex-column px-3 pt-0">
+                    <button> <Link to='/prisioner/report'>Report</Link></button>
                     <form className="row mt-1 g-3">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={4} >
@@ -475,6 +478,34 @@ const PrisionersForm = () => {
                                                 )}
                                             />
                                             {errors.dob && <span style={{ color: 'red' }}>{errors.dob.message}</span>}
+                                        </div>
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                    <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.arrested}>
+                                        <div className="col-xl-3 col-md-4 col-sm-12">
+                                            <label htmlFor="karagar_date">थुना परेको मिति<span>*</span></label>
+                                            <Controller
+                                                name="karagar_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <NepaliDatePicker
+                                                        value={value || ""} // Ensure empty string when no date is selected
+                                                        onChange={(karagar_date) => {
+                                                            onChange(karagar_date); // Update form state
+                                                            setKaragarDate(karagar_date); // Update state
+                                                            
+                                                        }}
+                                                        onBlur={onBlur} // Handle blur
+                                                        dateFormat="YYYY-MM-DD" // Customize your date format
+                                                        placeholder="Select Nepali Date"
+                                                        ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            />
+                                            {errors.karagar_date && <span style={{ color: 'red' }}>{errors.karagar_date.message}</span>}
                                         </div>
                                     </FormControl>
                                 </Grid>
