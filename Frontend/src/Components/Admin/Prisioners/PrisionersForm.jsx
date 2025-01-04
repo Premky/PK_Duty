@@ -485,7 +485,7 @@ const PrisionersForm = () => {
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.arrested}>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="karagar_date">थुना परेको मिति<span>*</span></label>
+                                            <label htmlFor="karagar_date">कारागार परेको मिति<span>*</span></label>
                                             <Controller
                                                 name="karagar_date"
                                                 control={control}
