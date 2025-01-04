@@ -517,7 +517,7 @@ const PrisionersForm = () => {
                                             <Controller
                                                 name="arrested"
                                                 control={control}
-                                                rules={{ required: "This field is required" }}
+                                                //rules={{ required: "This field is required" }}
                                                 render={({ field: { onChange, onBlur, value, ref } }) => (
                                                     <NepaliDatePicker
                                                         value={value || ""} // Ensure empty string when no date is selected
