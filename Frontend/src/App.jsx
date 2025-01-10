@@ -17,6 +17,10 @@ import CountPoliceReport from './Components/Admin/Police/CountReport';
 import AashritForm from './Components/Admin/Prisioners/AashritForm';
 import PoliceIndexRoute from './Components/Admin/Police/PoliceIndexRoute';
 import PrisionersIndexRoute from './Components/Admin/Prisioners/PrisionersIndexRoute';
+import DutyMaker from './Components/Admin/Police/DutyMaker';
+import PrisionersRecordTable from './Components/Admin/Prisioners/PrisionersRecordTable';
+import CommonPrisionersTable from './Components/Admin/Prisioners/CommonPrisionersTable';
+import PrisionerReleaseForm from './Components/Admin/Prisioners/PrisionerReleaseForm';
 
 
 const Nepalidate = new NepaliDate();
@@ -43,13 +47,19 @@ function App() {
           <Route path='/police' element={<PoliceIndexRoute />}>
             <Route index element={<PoliceForm />} />
             <Route path='report' element={<CountPoliceReport />} />
+            <Route path='prisioners' element={<CommonPrisionersTable />} />
+            <Route path='releaseform' element={<PrisionerReleaseForm />} />
           </Route>
 
           <Route path='/prisioner' element={<PrisionersIndexRoute />}>
             <Route index element={<PrisionersForm />} />
             <Route path='report' element={<CountPrisionerReport />} />
+            <Route path='prisioners' element={<CommonPrisionersTable />} />
+            <Route path='releaseform' element={<PrisionerReleaseForm />} />
           </Route>
           {/* Temproary Routes */}
+          <Route path='/prisioners' element={<CommonPrisionersTable />} />
+          <Route path='/dutymaker' element={<DutyMaker />} />
           <Route path='/aashrit' element={<AashritForm />} />
 
         </Routes>

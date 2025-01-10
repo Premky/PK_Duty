@@ -94,28 +94,29 @@ const CountPoliceReport = () => {
 
 
     const calculateTotals = (data) => {
-        // console.log(data)
         const totals = data.reduce(
             (acc, record) => ({
-                KaidiTotal: parseInt(acc.KaidiTotal) + parseInt(record.KaidiTotal),
-                ThunuwaTotal: parseInt(acc.ThunuwaTotal) + parseInt(record.ThunuwaTotal),
-                KaidiMale: parseInt(acc.KaidiMale) + parseInt(record.KaidiMale),
-                KaidiFemale: parseInt(acc.KaidiFemale) + parseInt(record.KaidiFemale),
-                ThunuwaMale: parseInt(acc.ThunuwaMale) + parseInt(record.ThunuwaMale),
-                ThunuwaFemale: parseInt(acc.ThunuwaFemale) + parseInt(record.ThunuwaFemale),
-                KaidiAgeAbove65: parseInt(acc.KaidiAgeAbove65) + parseInt(record.KaidiAgeAbove65),
-                ThunuwaAgeAbove65: parseInt(acc.ThunuwaAgeAbove65) + parseInt(record.ThunuwaAgeAbove65),
-                Nabalak: parseInt(acc.Nabalak) + parseInt(record.Nabalak),
-                Nabalika: parseInt(acc.Nabalika) + parseInt(record.Nabalak),
-                Total: parseInt(acc.Total) + parseInt(record.Total),
+                KaidiTotal: acc.KaidiTotal + (parseInt(record.KaidiTotal) || 0),
+                ThunuwaTotal: acc.ThunuwaTotal + (parseInt(record.ThunuwaTotal) || 0),
+                KaidiMale: acc.KaidiMale + (parseInt(record.KaidiMale) || 0),
+                KaidiFemale: acc.KaidiFemale + (parseInt(record.KaidiFemale) || 0),
+                ThunuwaMale: acc.ThunuwaMale + (parseInt(record.ThunuwaMale) || 0),
+                ThunuwaFemale: acc.ThunuwaFemale + (parseInt(record.ThunuwaFemale) || 0),
+                SumOfArrestedInDateRange: acc.SumOfArrestedInDateRange + (parseInt(record.TotalArrestedInDateRange) || 0),
+                SumOfReleasedInDateRange: acc.SumOfReleasedInDateRange + (parseInt(record.TotalReleasedInDateRange) || 0),
+                ThunuwaAgeAbove65: acc.ThunuwaAgeAbove65 + (parseInt(record.ThunuwaAgeAbove65) || 0),
+                Nabalak: acc.Nabalak + (parseInt(record.Nabalak) || 0),
+                Nabalika: acc.Nabalika + (parseInt(record.Nabalika) || 0),
+                Total: acc.Total + (parseInt(record.Total) || 0),
             }),
             {
                 KaidiTotal: 0, ThunuwaTotal: 0, KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0,
-                KaidiAgeAbove65: 0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
+                SumOfArrestedInDateRange: 0,SumOfReleasedInDateRange:0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
             }
         );
         setTotals(totals);
     };
+    
 
 
     const exportToExcel1 = () => {
@@ -230,7 +231,8 @@ const CountPoliceReport = () => {
         //     { s: { r: 1, c: 2 }, e: { r: 1, c: 4 } }, // Merge cells for "जम्मा"
         //     { s: { r: 1, c: 5 }, e: { r: 1, c: 7 } }, // Merge cells for "कैदी"
         //     { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }, // Merge cells for "थुनुवा"
-        // ];
+        //   ];
+          
 
         // Trigger download as an Excel file
         XLSX.writeFile(workbook, 'prisoner_records.xlsx');
@@ -242,7 +244,7 @@ const CountPoliceReport = () => {
 
     return (
         <>
-            <Link to='/police'>Police Form</Link>
+            {/* <Link to='/police'>Police Form</Link> */}
             <div className="report_title text-center bg-info bg-gradient p-2">
                 संख्यात्मक विवरण
             </div>
@@ -361,8 +363,8 @@ const CountPoliceReport = () => {
                                 <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaMale}</TableCell>
                                 <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaFemale}</TableCell>
                                 <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.ThunuwaMale) + parseInt(totals.ThunuwaFemale)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.KaidiAgeAbove65}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaAgeAbove65}</TableCell>
+                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfArrestedInDateRange}</TableCell>
+                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfReleasedInDateRange}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

@@ -165,7 +165,7 @@ const PoliceForm = () => {
         <React.Fragment>
             <div className="col-12">
                 <div className="d-flex flex-column px-3 pt-0">
-                <Link to="/police/report">Go to Report</Link>
+                {/* <Link to="/police/report">Go to Report</Link> */}
                     <form className="row mt-1 g-3">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={4} >

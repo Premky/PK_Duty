@@ -20,6 +20,9 @@ const Logout = () => {
         localStorage.removeItem('valid');
         localStorage.removeItem('type');
         localStorage.removeItem('branch');
+        localStorage.removeItem('main_office_id');
+        localStorage.removeItem('office_id');
+        localStorage.removeItem('office_np');
 
         // Redirect to login page after logout
         navigate('/login');

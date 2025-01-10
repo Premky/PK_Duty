@@ -27,8 +27,8 @@ router.post('/add_police', verifyToken, async (req, res) => {
     console.log('office', user_token.office);
 
     const { rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-         contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
-         gender, bp, height,
+        contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
+        gender, bp, height,
         weight, is_active } = req.body;
     console.log("Check Data:", req.body);
 
@@ -44,8 +44,8 @@ router.post('/add_police', verifyToken, async (req, res) => {
     gender, bp, height, weight, is_active, office_id, created_by, created_at) VALUES (?)`;
 
     const values = [rank_id, name_np, name_en, address, darbandi, pmis, sanket,
-         contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
-         gender, bp, height,
+        contact, blood_group, dob, working_from, recruit_date, promotion_date, qualification,
+        gender, bp, height,
         weight, is_active, user_token.office, user_token.uid, new Date()
     ];
     console.log(values);
@@ -158,8 +158,79 @@ router.delete('/delete_police/:id', async (req, res) => {
     }
 });
 
+router.get('/get_posts', async (req, res) => {
+    // console.log('Rank working');
+    const sql = `SELECT * FROM sec_posts ORDER BY id`;
+    try {
+        const result = await query(sql);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 
 
+router.post("/generate_duty",  async (req, res) => {
+// router.post("/generate_duty", verifyToken, async (req, res) => {
+    const user_token = req.user;
+    // const officeidbytoken = user_token.officeId;
+    const officeidbytoken = 1
+    const { date, officeId, commanderId, shifts, fixedAssignments } = req.body;
+
+    try {
+        const employees = await query(`SELECT * FROM sec_employe WHERE is_active = TRUE AND office_id=? 
+                ORDER BY rank_id`, [officeidbytoken]);
+        const posts = await query(`SELECT * FROM sec_posts WHERE office_id=?`, [officeidbytoken]);
+        const dutySchedule = [];
+        const remainingEmployees = employees.filter(emp => emp.id !== commanderId);
+
+        //Assign commander 
+        dutySchedule.push({
+            date,
+            shift: 1,
+            post_id: "1",
+            employee_id: commanderId
+        });
+
+        //Assign Serior Personnel 
+        for (let i = 0; i < posts.length && i < 2; i++) {
+            dutySchedule.push({
+                date,
+                shift: 1,
+                post_id: posts[i].id,
+                employee_id: remainingEmployees[i].id
+            });
+        }
+
+        //Rotate Remaining Employees
+        let employeeIndex = 2; // Start from 2nd senior
+        for (let shift = 2; shift <= shifts; shift++) {
+            for (let i = 2; i < posts.length; i++) {
+                dutySchedule.push({
+                    date,
+                    shift,
+                    post_id: posts[i].id,
+                    employee_id: remainingEmployees[employeeIndex % remainingEmployees.length].id
+                });
+                employeeIndex++;
+            }
+        }
+
+        // Insert Schedule into Database
+        for (const duty of dutySchedule) {
+            await query(
+                "INSERT INTO duty_schedule (date, shift, post_id, employee_id) VALUES (?, ?, ?, ?)",
+                [duty.date, duty.shift, duty.post_id, duty.employee_id]
+            );
+        }
+
+        res.json({ message: "Duty schedule generated successfully!", dutySchedule });
+    } catch (err) {
+        res.status(500).send(err);
+
+    }
+})
 //Common APIs
 router.get('/ranks', async (req, res) => {
     // console.log('Rank working');

@@ -43,7 +43,7 @@ const PrisionersForm = () => {
     const [cases, setCases] = useState([]); //Holds the records added or fetched for editing;
     const [records, setRecords] = useState([]); //Holds the records added or fetched for editing;
 
-    const currentofficeid = localStorage.getItem('office_id')
+    const currentofficeid = localStorage.getItem('main_office_id')
     const currentofficenp = localStorage.getItem('office_np')
 
     //Specifically for this form:
@@ -495,7 +495,7 @@ const PrisionersForm = () => {
                                                         value={value || ""} // Ensure empty string when no date is selected
                                                         onChange={(karagar_date) => {
                                                             onChange(karagar_date); // Update form state
-                                                            setKaragarDate(karagar_date); // Update state
+                                                            // setKaragarDate(karagar_date); // Update state
                                                             
                                                         }}
                                                         onBlur={onBlur} // Handle blur

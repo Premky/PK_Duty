@@ -199,24 +199,24 @@ router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     COUNT(*) AS Total,
 
     -- Kaidi Total, Male and Female
-    SUM(CASE WHEN prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
-    SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
-    SUM(CASE WHEN prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
-    SUM(CASE WHEN prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
 
     -- Thunuwa Total, Male and Female
-    SUM(CASE WHEN prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
-    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
-    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
-    SUM(CASE WHEN prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
 
     -- Nabalik_Nabalika
-    SUM(CASE WHEN gender = 'M' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalak,
-    SUM(CASE WHEN gender = 'F' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalika,
+    SUM(CASE WHEN release_id IS NULL AND gender = 'M' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalak,
+    SUM(CASE WHEN release_id IS NULL AND gender = 'F' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) < 18 THEN 1 ELSE 0 END) AS Nabalika,
 
     -- Total within date range (filtered)
-    SUM(CASE WHEN (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
-    SUM(CASE WHEN (STR_TO_DATE(pi.release_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange
+    SUM(CASE WHEN release_id IS NULL AND (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
+    SUM(CASE WHEN (STR_TO_DATE(pi.released_date, '%Y-%m-%d') BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange
 FROM 
     prisioners_info pi
     LEFT JOIN cases c ON pi.case_id = c.id   
@@ -229,9 +229,9 @@ WHERE
 
     try {
         const params = [
-            startDate, endDate, 
-            startDate, endDate, 
-            userToken.main_office, 
+            startDate, endDate,
+            startDate, endDate,
+            userToken.main_office,
             startDate, endDate
         ]
         console.log(params)
