@@ -43,7 +43,7 @@ const AashritForm = () => {
     const [cases, setCases] = useState([]); //Holds the records added or fetched for editing;
     const [records, setRecords] = useState([]); //Holds the records added or fetched for editing;
 
-    const currentofficeid = localStorage.getItem('office_id')
+    const currentofficeid = localStorage.getItem('main_office_id')
     const currentofficenp = localStorage.getItem('office_np')
 
     //Specifically for this form:
@@ -333,7 +333,6 @@ const AashritForm = () => {
                                             label="मुद्दा"
                                             defaultValue={currentofficeid}
                                         >
-
                                             {adminOffice.map((data) => (
                                                 <MenuItem value={data.id} key={data.id} disabled>{data.office_np}</MenuItem>
                                             ))}
@@ -422,7 +421,7 @@ const AashritForm = () => {
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} error={!!errors.name_np}>
                                         <TextField
                                             id="name_np"
-                                            label="प्रतिवादीको नाम नेपालीमा"
+                                            label="नाबालकको नाम नेपालीमा"
                                             {...register('name_np', { required: "This field is required." })}
                                             fullWidth
                                             margin="normal"
@@ -435,7 +434,7 @@ const AashritForm = () => {
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} >
                                         <TextField
                                             id="name_en"
-                                            label="प्रतिवादीको नाम (अंग्रेजीमा)"
+                                            label="नाबालकको नाम (अंग्रेजीमा)"
                                             {...register('name_en', { required: "This field is required." })}
                                             fullWidth
                                             margin="normal"

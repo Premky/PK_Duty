@@ -51,6 +51,7 @@ function App() {
             {/* <Route path='report' element={<CountPoliceReport />} /> */}
             <Route path='prisioners' element={<CommonPrisionersTable />} />
             <Route path='releaseform' element={<PrisionerReleaseForm />} />
+            <Route path='aashrit' element={<AashritForm />} />
           </Route>
 
           <Route path='/prisioner' element={<PrisionersIndexRoute />}>
