@@ -298,8 +298,8 @@ router.get('/get_release_prisioners/:id', async (req, res) => {
     }
 });
 
-//Get Police Records
-router.get('/get_release_prisioners', async (req, res) => {
+//Get Released Records
+router.get('/get_released_prisioners', async (req, res) => {
     // console.log('Rank working');
     const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
                 FROM prisioners_info pi

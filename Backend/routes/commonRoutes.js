@@ -225,7 +225,10 @@ WHERE
     GROUP BY 
     pi.case_id
 HAVING 
-    KaidiTotal> 0 OR ThunuwaTotal > 0
+    KaidiTotal> 0 OR 
+    ThunuwaTotal > 0 OR 
+    TotalArrestedInDateRange > 0 OR 
+    TotalReleasedInDateRange > 0
 ORDER BY c.name_np
     `;
     // AND 
