@@ -223,7 +223,11 @@ FROM
 WHERE 
     pi.office_id = ? 
     GROUP BY 
-    pi.case_id`;
+    pi.case_id
+HAVING 
+    KaidiTotal> 0 OR ThunuwaTotal > 0
+ORDER BY c.name_np
+    `;
     // AND 
     // (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) 
 

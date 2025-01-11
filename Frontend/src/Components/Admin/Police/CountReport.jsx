@@ -111,7 +111,7 @@ const CountPoliceReport = () => {
             }),
             {
                 KaidiTotal: 0, ThunuwaTotal: 0, KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0,
-                SumOfArrestedInDateRange: 0,SumOfReleasedInDateRange:0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
+                SumOfArrestedInDateRange: 0, SumOfReleasedInDateRange:0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
             }
         );
         setTotals(totals);
@@ -348,8 +348,6 @@ const CountPoliceReport = () => {
 
                                     <TableCell align='center'>{record.TotalArrestedInDateRange}</TableCell>
                                     <TableCell align='center'>{record.TotalReleasedInDateRange}</TableCell>
-
-
                                 </TableRow>
                             ))}
                             <TableRow key='total' >
