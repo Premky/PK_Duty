@@ -15,8 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 import Logout from '../../Login/Logout';
 // Pages and their corresponding routes
-const pagesLabel = ['फर्म', 'डिउटी', 'कैदीबन्दीको नामावली','कैदीबन्दीको संख्या','कैदमुक्त'];
-const pages = ['police', 'duty','police/prisioners', 'police/report', 'police/releaseform']; // corresponding paths
+const pagesLabel = ['कैदीबन्दीको संख्या', 'कैदीबन्दीको विवरण थप्नुहोस', 'कैदीबन्दीको नामावली','कैदमुक्त','प्रहरी कर्मचारीको विवरण'];
+const pages = ['police', 'police/addprisioner','police/prisioners', 'police/releaseform', 'police/addpolice']; // corresponding paths
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);

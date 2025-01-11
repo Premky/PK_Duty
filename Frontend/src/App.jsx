@@ -45,8 +45,10 @@ function App() {
 
 
           <Route path='/police' element={<PoliceIndexRoute />}>
-            <Route index element={<PoliceForm />} />
-            <Route path='report' element={<CountPoliceReport />} />
+            <Route index element={<CountPoliceReport />} />
+            <Route path='addpolice' element={<PoliceForm/>}/>
+            <Route path='addprisioner' element={<PrisionersForm/>}/>
+            {/* <Route path='report' element={<CountPoliceReport />} /> */}
             <Route path='prisioners' element={<CommonPrisionersTable />} />
             <Route path='releaseform' element={<PrisionerReleaseForm />} />
           </Route>
