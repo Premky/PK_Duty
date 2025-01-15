@@ -24,11 +24,39 @@ const CountPoliceReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
+
+    // const today = new Date();
+    // const sevenDaysAgo = new Date(today);
+    // sevenDaysAgo.setDate(today.getDate() - 7);
+    // console.log('Seven Days Ago:', sevenDaysAgo); // Check this value
+
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
-    const datebefore7days = new NepaliDate(npToday)
-    datebefore7days.setDate(npToday.getDate() - 7);
-    const formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');
+    // const datebefore7days = new NepaliDate(npToday)
+    // datebefore7days.setDate(npToday.getDate() - 7);
+    // const formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');
+
+    let formatteddatebefore7days = formattedDateNp;
+    try {
+        const datebefore7days = new NepaliDate(npToday);
+        console.log(datebefore7days)
+        const currentNepaliDate = { year: dateData.year, month: dateData.month, day: dateData.day };
+        const currentEnglishDate = { year: dateData.yearEn, month: dateData.monthEn + 1, day: dateData.dayEn }; // Adjust monthEn to 1-based
+
+        // Calculate 7 days before
+        const nepaliDateBefore7Days = calculateNepaliDate(currentNepaliDate.year, currentNepaliDate.month, currentNepaliDate.day, 7);
+        const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object
+        // datebefore7days.setDate(npToday.getDate() - 7);
+        // formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');        
+
+    } catch (error) {
+        console.error("Error calculating date before 7 days:", error);
+        formatteddatebefore7days = formattedDateNp; // Handle the case where the date is invalid
+    }
+
+
+
+
 
     // console.log(formattedDateNp, formatteddatebefore7days)
 
@@ -51,7 +79,7 @@ const CountPoliceReport = () => {
         Total: 0,
     });
 
-    const [start_Date, setStart_Date]=useState(formatteddatebefore7days);
+    const [start_Date, setStart_Date] = useState(formatteddatebefore7days);
     const [end_Date, setEnd_Date] = useState(formattedDateNp);
 
     const fetchRecords = async (data) => {
@@ -111,12 +139,12 @@ const CountPoliceReport = () => {
             }),
             {
                 KaidiTotal: 0, ThunuwaTotal: 0, KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0,
-                SumOfArrestedInDateRange: 0, SumOfReleasedInDateRange:0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
+                SumOfArrestedInDateRange: 0, SumOfReleasedInDateRange: 0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
             }
         );
         setTotals(totals);
     };
-    
+
 
 
     const exportToExcel1 = () => {
@@ -127,8 +155,8 @@ const CountPoliceReport = () => {
     };
 
     const exportToExcel2 = () => {
-        const headers = ['सि.नं.', 'मुद्दाको विवरण', 'जम्मा कैदी', 'जम्मा बन्दी','कैदी पुरुष','बन्दी पुरुष',
-            'कैदी महिला','बन्दी महिला', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
+        const headers = ['सि.नं.', 'मुद्दाको विवरण', 'जम्मा कैदी', 'जम्मा बन्दी', 'कैदी पुरुष', 'बन्दी पुरुष',
+            'कैदी महिला', 'बन्दी महिला', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
 
         const formattedData = records.map(record => ({
             'सि.नं.': record.id,
@@ -164,8 +192,8 @@ const CountPoliceReport = () => {
         // Headers for the Excel sheet
         const headers = [
             [`मिति ${start_Date} गतेबाट ${end_Date} सम्म कारागार कार्यालय संखुवासभामा रहेका कैदीबन्दीहरुको मुद्दागत जाहेरी`],
-            ['सि.नं.', 'मुद्दा', '', 'जम्मा', '', '', 'कैदी', '', '','थुनुवा', '', '', '', ''],
-            ['', '', 'कैदी', 'थुनुवा', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
+            ['सि.नं.', 'मुद्दा', 'जम्मा', '', '', 'कैदी', '', '', 'थुनुवा', '', '', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत'],
+            ['', '', 'कैदी', 'थुनुवा', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', 'पुरुष', 'महिला', 'जम्मा', '', '', '']
         ];
 
         // Data for the rows
@@ -199,22 +227,29 @@ const CountPoliceReport = () => {
             totals.ThunuwaMale,
             totals.ThunuwaFemale,
             totals.ThunuwaMale + totals.ThunuwaFemale,
-            totals.KaidiAgeAbove65,
-            totals.ThunuwaAgeAbove65
+            totals.record.TotalArrestedInDateRange,
+            totals.record.TotalReleasedInDateRange
         ];
         formattedData.push(totalsRow);
 
-        const otherdetails=[
+        const blankline = [
+            '', '', '', '', '', '', '', '', '', '', ''
+        ]
+        formattedData.push(blankline);
+        formattedData.push(blankline);
+        formattedData.push(blankline);
+
+        const otherdetails = [
             '', `मितिः ${formattedDateNp} गते ।`, '', '', '', '', '', '', '', '', 'तुलसी राम राई'
         ]
         formattedData.push(otherdetails);
-        const otherdetails2=[
+        const otherdetails2 = [
             '', '', '', '', '', '', '', '', '', '', 'प्रहरी सहायक निरिक्षक'
         ]
         formattedData.push(otherdetails2);
 
         // Create a worksheet and a workbook
-        const worksheet = XLSX.utils.aoa_to_sheet([ ...headers, ...formattedData ]);
+        const worksheet = XLSX.utils.aoa_to_sheet([...headers, ...formattedData]);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisoner Records');
 
@@ -227,12 +262,20 @@ const CountPoliceReport = () => {
             }
         }
 
-        // worksheet['!merges'] = [
-        //     { s: { r: 1, c: 2 }, e: { r: 1, c: 4 } }, // Merge cells for "जम्मा"
-        //     { s: { r: 1, c: 5 }, e: { r: 1, c: 7 } }, // Merge cells for "कैदी"
-        //     { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }, // Merge cells for "थुनुवा"
-        //   ];
-          
+        worksheet['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 13 } }, // Merge cells for "Title"
+            { s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, // Merge cells for "सि.नं."
+            { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }, // Merge cells for "मुद्दा"
+            { s: { r: 1, c: 11 }, e: { r: 2, c: 11 } }, // Merge cells for "आएको संख्या"
+            { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } }, // Merge cells for "गएको संख्या"
+            { s: { r: 1, c: 13 }, e: { r: 2, c: 13 } }, // Merge cells for "कैफियत"
+            { s: { r: 1, c: 2 }, e: { r: 1, c: 4 } }, // Merge cells for "जम्मा"
+            { s: { r: 1, c: 5 }, e: { r: 1, c: 7 } }, // Merge cells for "कैदी"
+            { s: { r: 1, c: 8 }, e: { r: 1, c: 10 } }, // Merge cells for "थुनुवा"
+            // { s: { r: 1, c: 11 }, e: { r: 2, c: 11 } }, // Merge cells for "मिति"
+            // { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } }, // Merge cells for "गार्ड प्रमुखको नाम"
+        ];
+
 
         // Trigger download as an Excel file
         XLSX.writeFile(workbook, 'prisoner_records.xlsx');

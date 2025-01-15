@@ -384,7 +384,7 @@ const AashritForm = () => {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12} sm={4} md={3} mt={2}>
+                                {/* <Grid item xs={12} sm={4} md={3} mt={2}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
                                         <InputLabel id="case_id">मुद्दा</InputLabel>
                                         <Select
@@ -400,10 +400,9 @@ const AashritForm = () => {
                                             {cases.map((data) => (
                                                 <MenuItem value={data.id} key={data.id}>{data.name_np}</MenuItem>
                                             ))}
-                                        </Select>
-                                        {/* {errors.rank && <p style={{ color: 'red' }}>{errors.rank.message}</p>} Display validation error */}
+                                        </Select>                                        
                                     </FormControl>
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid item xs={12} sm={8} md={6} xl={3} hidden>
                                     <FormControl sx={{ m: .5, minWidth: 215 }} >
