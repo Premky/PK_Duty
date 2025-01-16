@@ -208,7 +208,7 @@ const AashritForm = () => {
 
     const fetchRecords = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/prisioner/get_prisioners`);
+            const response = await axios.get(`${BASE_URL}/prisioner/get_aashrit_prisioners`);
             const { Status, Result, Error } = response.data;
 
             if (Status) {
@@ -601,13 +601,12 @@ const AashritForm = () => {
                             </div>
                         </div>
                     </form>
+                    <div>
+                        
+                    </div>
                 </div>
             </div >
-            <PrisionersRecordTable
-                records={records}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-            />
+
         </React.Fragment >
     )
 }

@@ -54,10 +54,6 @@ const CountPoliceReport = () => {
         formatteddatebefore7days = formattedDateNp; // Handle the case where the date is invalid
     }
 
-
-
-
-
     // console.log(formattedDateNp, formatteddatebefore7days)
 
     const { register, handleSubmit, reset, setValue, formState: { errors }, control } = useForm({
@@ -143,49 +139,6 @@ const CountPoliceReport = () => {
             }
         );
         setTotals(totals);
-    };
-
-
-
-    const exportToExcel1 = () => {
-        const worksheet = XLSX.utils.json_to_sheet(records);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisioner Records');
-        XLSX.writeFile(workbook, 'prisioner_records.xlsx');
-    };
-
-    const exportToExcel2 = () => {
-        const headers = ['सि.नं.', 'मुद्दाको विवरण', 'जम्मा कैदी', 'जम्मा बन्दी', 'कैदी पुरुष', 'बन्दी पुरुष',
-            'कैदी महिला', 'बन्दी महिला', 'आएको संख्या', 'छुटेको संख्या', 'कैफियत']
-
-        const formattedData = records.map(record => ({
-            'सि.नं.': record.id,
-            'मुद्दाको विवरण': record.CaseNameNP,
-            'जम्मा कैदी': record.KaidiTotal,
-            'जम्मा बन्दी': record.ThunuwaTotal,
-            // 'जम्मा कैदीबन्दी':parseInt(record.ThunuwaTotal) + parseInt(record.KaidiTotal), 
-            'कैदी पुरुष': record.KaidiMale,
-            'बन्दी पुरुष': record.ThunuwaMale,
-            'कैदी महिला': record.KaidiFemale,
-            'बन्दी महिला': record.ThunuwaFemale,
-            'आएको संख्या': record.TotalArrestedInDateRange,
-            'छुटेको संख्या': record.TotalReleasedInDateRange,
-        }));
-
-        const worksheet = XLSX.utils.json_to_sheet(formattedData, { header: headers });
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisioner Records');
-
-        // Apply cell styles (e.g., bold headers)
-        const range = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let col = range.s.c; col <= range.e.c; col++) {
-            const headerCell = worksheet[XLSX.utils.encode_cell({ r: 0, c: col })];
-            if (headerCell) {
-                headerCell.s = { font: { bold: true } }; // Make header bold
-            }
-        }
-
-        XLSX.writeFile(workbook, 'prisioner_records.xlsx');
     };
 
     const exportToExcel = () => {

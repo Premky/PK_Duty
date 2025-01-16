@@ -241,7 +241,7 @@ ORDER BY c.name_np
             userToken.main_office,
             startDate, endDate
         ]
-        console.log(params)
+        // console.log(params)
         const result = await query(sql, params);
 
         return res.json({ Status: true, Result: result })

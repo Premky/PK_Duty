@@ -251,7 +251,7 @@ const PrisionersForm = () => {
         setValue('address', record.address);
         setValue('gender', record.gender);
         setValue('dob', record.dob);
-        setValue('karagar_date,', record.karagar_date,);
+        setValue('karagar_date', record.karagar_date);
         setValue('arrested', record.arrested);
         setValue('release_date', record.release_date);
         setValue('faisala_office', record.faisala_office);
@@ -495,7 +495,7 @@ const PrisionersForm = () => {
                                                         value={value || ""} // Ensure empty string when no date is selected
                                                         onChange={(karagar_date) => {
                                                             onChange(karagar_date); // Update form state
-                                                            // setKaragarDate(karagar_date); // Update state
+                                                            setKaragarDate(karagar_date); // Update state
                                                             
                                                         }}
                                                         onBlur={onBlur} // Handle blur

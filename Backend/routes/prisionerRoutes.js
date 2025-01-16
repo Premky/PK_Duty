@@ -138,7 +138,7 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
     console.log("Check Data:", id);
 
     //Input Validation
-    if (parseInt(office_id, 10) !== parseInt(userToken.office, 10)) {
+    if (parseInt(office_id, 10) !== parseInt(userToken.main_office, 10)) {
         return res.status(403).json({
             Status: false,
             Error: 'Unauthorized: Invalid office ID.',
@@ -364,6 +364,23 @@ router.put('/update_release_prisioner/:id', verifyToken, async (req, res) => {
         });
     }
 })
+
+router.get('/get_aashrit_prisioners', async (req, res) => {
+    // console.log('Rank working');
+    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
+                FROM prisioners_info pi
+                LEFT JOIN cases c ON pi.case_id = c.id
+                WHERE prisioner_type='आश्रित'
+                ORDER BY pi.name_np ASC`;
+
+    try {
+        const result = await query(sql);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 
 router.get('/get_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
