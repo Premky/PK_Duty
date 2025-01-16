@@ -214,7 +214,7 @@ const AashritForm = () => {
             if (Status) {
                 if (Result?.length > 0) {
                     setRecords(Result); //Set the fetched Records
-                    console.log(Result);
+                    // console.log(Result);
                 } else {
                     console.log("No Record Found")
                 }
@@ -276,19 +276,15 @@ const AashritForm = () => {
 
     const [aashritCase, setAashritCase] = useState('');
 
-    const selectGuardian = async (e) => {
-        console.log(e.value); // Logs the selected guardian value
+    const [guardian, setGuardian]=useState([]);
+    const fetchGuardians= async () => {
         try {
-            const url = `${BASE_URL}/prisioner/get_prisioners/${e.value}`
-            const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` },
-                withCredentials: true, // If cookies are required
-            });
+            const response = await axios.get(`${BASE_URL}/prisioner/get_prisioners`);
             const { Status, Result, Error } = response.data;
 
             if (Status) {
                 if (Result?.length > 0) {
-                    setAashritCase(Result[0].case_id); //Set the fetched Records
+                    setGuardian(Result); //Set the fetched Records
                     console.log(Result);
                 } else {
                     console.log("No Record Found")
@@ -306,6 +302,7 @@ const AashritForm = () => {
 
     useEffect(() => {
         // handleLogin();
+        fetchGuardians();
         fetchCase();
         fetchRecords();
         fetchCountry();
@@ -363,24 +360,21 @@ const AashritForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={4} md={3} mt={2}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.guardian}>
-                                        <InputLabel id="case_id">आमा/बुवा</InputLabel>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
+                                        <InputLabel id="prisioner_name">कैदीको नामथर नाम</InputLabel>
                                         <Select
-                                            labelId="guardian-label"
-                                            id="guardian"
-                                            // value={case_id}
-                                            {...register('guardian', { required: "This field is required." })}
-                                            // onChange={(e) => setCase_id(e.target.value)}
-                                            onChange={(e) => selectGuardian(e.target)}
+                                            labelId="prisioner_name-label"
+                                            id="prisioner_name"
+                                            {...register('prisioner_name', { required: "This field is required." })}
                                             autoWidth
-                                            label="आमा/बुवा"
+                                            label="कैदीको नामथर"
+                                        // defaultValue={currentofficeid}
                                         >
-                                            <MenuItem value=""><em>आमा/बुवा</em></MenuItem>
-                                            {records.map((data) => (
-                                                <MenuItem value={data.id} key={data.id}>{data.name_np}({data.case_np})</MenuItem>
+
+                                            {guardian.map((data) => (
+                                                <MenuItem value={data.id} key={data.id}> {data.name_np} ({data.prisioner_type}) ({data.case_np})</MenuItem>
                                             ))}
                                         </Select>
-                                        {/* {errors.rank && <p style={{ color: 'red' }}>{errors.rank.message}</p>} Display validation error */}
                                     </FormControl>
                                 </Grid>
 
@@ -433,6 +427,7 @@ const AashritForm = () => {
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} >
                                         <TextField
                                             id="name_en"
+                                            value='-'
                                             label="नाबालकको नाम (अंग्रेजीमा)"
                                             {...register('name_en', { required: "This field is required." })}
                                             fullWidth

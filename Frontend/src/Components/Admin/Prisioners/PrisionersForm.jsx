@@ -19,9 +19,10 @@ import Box from '@mui/material/Box';
 // import Select from '@mui/material'
 
 
-import Logout from '../../Login/Logout'
-import { useActionState } from 'react'
-import PrisionersRecordTable from './PrisionersRecordTable'
+import { useActionState } from 'react';
+import Logout from '../../Login/Logout';
+import DateInputField from "./../../ReusableComponents/DateInputField";
+import PrisionersRecordTable from './PrisionersRecordTable';
 
 const PrisionersForm = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -29,7 +30,7 @@ const PrisionersForm = () => {
     const navigate = useNavigate();
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
-    const { register, handleSubmit, reset, setValue, formState: { errors }, control } = useForm();
+    const { register, handleSubmit, reset, setValue, watch, formState: { errors }, control } = useForm();
 
     const [currentData, setCurrentData] = useState();
     const [isLoading, startTransition] = useTransition();
@@ -241,6 +242,8 @@ const PrisionersForm = () => {
         setFaisala_office(record.faisala_office);
         setPunrabedan(record.punarabedan);
 
+        const formattedDob = record.dob ? record.dob.slice(0, 10) : "";
+        console.log("formatted dob:", formattedDob)
         setValue('office', record.office_id);
         setValue('prisioner_type', record.prisioner_type);
         setValue('case_id', record.case_id);
@@ -250,17 +253,17 @@ const PrisionersForm = () => {
         setValue('country', record.country);
         setValue('address', record.address);
         setValue('gender', record.gender);
-        setValue('dob', record.dob);
+        setValue('dob', formattedDob);
         setValue('karagar_date', record.karagar_date);
         setValue('arrested', record.arrested);
         setValue('release_date', record.release_date);
         setValue('faisala_office', record.faisala_office);
         setValue('faisala_date', record.faisala_date);
-        setValue('punarabedan', record.punarabedan);        
+        setValue('punarabedan', record.punarabedan);
         setValue('duration', record.duration);
         setValue('fine', record.fine);
         setValue('fine_duration', record.fine_duration);
-        setValue('total_duration', record.total_duration);        
+        setValue('total_duration', record.total_duration);
     };
 
     const handleDelete = async (id) => {
@@ -458,22 +461,20 @@ const PrisionersForm = () => {
                                             borderRadius: "4px",
                                         }
                                     }} error={!!errors.dob}>
+                                        <label htmlFor="dob">जन्म मिति<span>*</span></label>
                                         < div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="dob">जन्म मिति<span>*</span></label>
                                             <Controller
                                                 name="dob"
                                                 control={control}
                                                 rules={{ required: "This field is required" }}
                                                 render={({ field: { onChange, onBlur, value, ref } }) => (
-                                                    <NepaliDatePicker
-                                                        value={value || ""} // Ensure empty string when no date is selected
-                                                        onChange={(dob) => {
-                                                            onChange(dob); // Update form state
-                                                        }}
-                                                        onBlur={onBlur} // Handle blur
-                                                        dateFormat="YYYY-MM-DD" // Customize your date format
-                                                        placeholder="Select Nepali Date"
-                                                    // ref={ref} // Use ref from react-hook-form
+                                                    <DateInputField
+                                                        name="dob"
+                                                        value={value || ""}
+                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onBlur={onBlur}
+                                                        ref={ref}
+                                                        placeholder="YYYY-MM-DD"
                                                     />
                                                 )}
                                             />
@@ -484,9 +485,9 @@ const PrisionersForm = () => {
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.arrested}>
+                                        <label htmlFor="karagar_date">कारागार परेको मिति<span>*</span></label>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="karagar_date">कारागार परेको मिति<span>*</span></label>
-                                            <Controller
+                                            {/* <Controller
                                                 name="karagar_date"
                                                 control={control}
                                                 rules={{ required: "This field is required" }}
@@ -496,12 +497,27 @@ const PrisionersForm = () => {
                                                         onChange={(karagar_date) => {
                                                             onChange(karagar_date); // Update form state
                                                             setKaragarDate(karagar_date); // Update state
-                                                            
+
                                                         }}
                                                         onBlur={onBlur} // Handle blur
                                                         dateFormat="YYYY-MM-DD" // Customize your date format
                                                         placeholder="Select Nepali Date"
                                                         ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            /> */}
+                                            <Controller
+                                                name="karagar_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <DateInputField
+                                                        name="karagar_date"
+                                                        value={value || ""}
+                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onBlur={onBlur}
+                                                        ref={ref}
+                                                        placeholder="YYYY-MM-DD"
                                                     />
                                                 )}
                                             />
@@ -512,8 +528,8 @@ const PrisionersForm = () => {
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.arrested}>
-                                        <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="arrested">थुना परेको मिति<span>*</span></label>
+                                        <label htmlFor="arrested">थुना परेको मिति<span>*</span></label>
+                                        {/* <div className="col-xl-3 col-md-4 col-sm-12">
                                             <Controller
                                                 name="arrested"
                                                 control={control}
@@ -534,16 +550,31 @@ const PrisionersForm = () => {
                                                 )}
                                             />
                                             {errors.arrested && <span style={{ color: 'red' }}>{errors.arrested.message}</span>}
-                                        </div>
+                                        </div> */}
+                                        <Controller
+                                            name="arrested"
+                                            control={control}
+                                            rules={{ required: "This field is required" }}
+                                            render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                <DateInputField
+                                                    name="arrested"
+                                                    value={value || ""}
+                                                    onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                    onBlur={onBlur}
+                                                    ref={ref}
+                                                    placeholder="YYYY-MM-DD"
+                                                />
+                                            )}
+                                        />
                                     </FormControl>
                                 </Grid>
 
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.release_date}>
+                                        <label htmlFor="release_date">कैद मुक्त हुने मिति<span>*</span></label>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="release_date">कैद मुक्त हुने मिति<span>*</span></label>
-                                            <Controller
+                                            {/* <Controller
                                                 name="release_date"
                                                 control={control}
                                                 // rules={{ required: "This field is required" }}
@@ -559,6 +590,21 @@ const PrisionersForm = () => {
                                                         dateFormat="YYYY-MM-DD" // Customize your date format
                                                         placeholder="Select Nepali Date"
                                                         ref={ref} // Use ref from react-hook-form
+                                                    />
+                                                )}
+                                            /> */}
+                                            <Controller
+                                                name="release_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                    <DateInputField
+                                                        name="release_date"
+                                                        value={value || ""}
+                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onBlur={onBlur}
+                                                        ref={ref}
+                                                        placeholder="YYYY-MM-DD"
                                                     />
                                                 )}
                                             />
@@ -600,11 +646,26 @@ const PrisionersForm = () => {
                                     }} error={!!errors.faisala_date}>
 
                                         <label htmlFor="faisala_date">फैसला मिति</label>
-                                        <NepaliDatePicker
+                                        {/* <NepaliDatePicker
                                             inputClassName="form-control"
                                             // value={date}
                                             {...register('faisala_date')}
                                             options={{ calenderLocale: "ne", valueLocale: "en" }}
+                                        /> */}
+                                        <Controller
+                                            name="faisala_date"
+                                            control={control}
+                                            // rules={{ required: "This field is required" }}
+                                            render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                <DateInputField
+                                                    name="faisala_date"
+                                                    value={value || ""}
+                                                    onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                    onBlur={onBlur}
+                                                    ref={ref}
+                                                    placeholder="YYYY-MM-DD"
+                                                />
+                                            )}
                                         />
                                         {errors.faisala_date && <p style={{ color: 'red' }}>{errors.faisala_date.message}</p>} {/* Display validation error */}
                                     </FormControl>
