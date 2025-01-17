@@ -472,7 +472,9 @@ const PrisionersForm = () => {
                                                     <DateInputField
                                                         name="dob"
                                                         value={value || ""}
-                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onChange={(e) => {
+                                                            const value = e.target ? e.target.value : e;
+                                                            onChange(value)}} // Pass only the value
                                                         onBlur={onBlur}
                                                         ref={ref}
                                                         placeholder="YYYY-MM-DD"
@@ -519,7 +521,7 @@ const PrisionersForm = () => {
                                                         onChange={(karagar_date) => {
                                                             const value = karagar_date.target ? karagar_date.target.value : karagar_date;
                                                             onChange(value); // Update form state
-                                                            setKaragarDate(value); // Update local state
+                                                            // setKaragarDate(value); // Update local state
 
                                                         }}
 
