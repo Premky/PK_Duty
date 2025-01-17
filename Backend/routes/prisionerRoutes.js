@@ -26,7 +26,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     // console.log('User ID:', userToken.uid);
     // console.log('Office ID:', userToken.office);
-
+    const main_office = userToken.main_office
     // Destructuring the data from the request body
     const {
         address, arrested, case_id, country, dob, duration, faisala_date,
@@ -34,10 +34,10 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
         office_id, prisioner_type, punarabedan, release_date, total_duration
     } = req.body;
 
-    console.log("Check Data:", { office_id, case_id });
+    console.log("Check Data:", { office_id, main_office });
 
     // Input Validation: Ensure the office_id in the payload matches the user's token
-    if (parseInt(office_id, 10) !== parseInt(userToken.office, 10)) {
+    if (parseInt(office_id, 10) !== parseInt(main_office, 10)) {
         return res.status(403).json({
             Status: false,
             Error: 'Unauthorized: Invalid office ID.',

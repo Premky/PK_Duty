@@ -65,6 +65,7 @@ const PrisionersForm = () => {
 
     const calculate_duration = (s, e) => {
         if (s && e) {
+            
             const start = new Date(s);
             const end = new Date(e);
 
@@ -514,7 +515,14 @@ const PrisionersForm = () => {
                                                     <DateInputField
                                                         name="karagar_date"
                                                         value={value || ""}
-                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        // onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onChange={(karagar_date) => {
+                                                            const value = karagar_date.target ? karagar_date.target.value : karagar_date;
+                                                            onChange(value); // Update form state
+                                                            setKaragarDate(value); // Update local state
+
+                                                        }}
+
                                                         onBlur={onBlur}
                                                         ref={ref}
                                                         placeholder="YYYY-MM-DD"
@@ -559,7 +567,13 @@ const PrisionersForm = () => {
                                                 <DateInputField
                                                     name="arrested"
                                                     value={value || ""}
-                                                    onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                    onChange={(arrested) => {
+                                                        const value = arrested.target ? arrested.target.value : arrested;
+                                                        onChange(value)
+                                                        setArrestedDate(value); // Update state
+                                                        console.log(value)
+                                                        calculate_duration(value, '1999-01-01'); // Trigger duration calculation
+                                                    }}// Pass only the value
                                                     onBlur={onBlur}
                                                     ref={ref}
                                                     placeholder="YYYY-MM-DD"
@@ -601,7 +615,12 @@ const PrisionersForm = () => {
                                                     <DateInputField
                                                         name="release_date"
                                                         value={value || ""}
-                                                        onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                        onChange={(release_date) => {
+                                                            const value = release_date.target ? release_date.target.value : release_date;
+                                                            onChange(value)
+                                                            setReleaseDate(value);
+                                                            calculate_duration(arrestedDate, value);
+                                                        }}
                                                         onBlur={onBlur}
                                                         ref={ref}
                                                         placeholder="YYYY-MM-DD"
