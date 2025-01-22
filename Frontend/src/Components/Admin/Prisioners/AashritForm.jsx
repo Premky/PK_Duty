@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
-
+import Autocomplete from '@mui/material/Autocomplete';
 // import PoliceRecordTable from './PoliceRecordTable';
 // import Select from '@mui/material'
 
@@ -35,13 +35,14 @@ const AashritForm = () => {
     const [isLoading, startTransition] = useTransition();
     const [editing, setEditing] = useState(false);
 
-    const [countries, setCountries] = useState([]);
-    const [juidicialbody, setJuidicialbody] = useState([]);
     const [adminOffice, setAdminOffice] = useState([]);
 
     const [selectedCase, setSelectedCase] = useState('');
     const [cases, setCases] = useState([]); //Holds the records added or fetched for editing;
     const [records, setRecords] = useState([]); //Holds the records added or fetched for editing;
+
+
+
 
     const currentofficeid = localStorage.getItem('main_office_id')
     const currentofficenp = localStorage.getItem('office_np')
@@ -51,108 +52,6 @@ const AashritForm = () => {
     const [prisioner_type, setPrisioner_type] = useState("आश्रित");
     const [case_id, setCase_id] = useState("");
     const [gender, setGender] = useState("");
-    const [faisala_office, setFaisala_office] = useState(0);
-    const [punarabedan, setPunrabedan] = useState(0);
-
-    const [arrestedDate, setArrestedDate] = useState("");
-    const [releaseDate, setReleaseDate] = useState("");
-    const [duration, setDuration] = useState(0);
-    const [fine, setFine] = useState(0);
-    const [fineDuration, setFineDuration] = useState(0);
-    const [totalDuration, setTotalDuration] = useState(0);
-
-    const calculate_duration = (s, e) => {
-        if (s && e) {
-            const start = new Date(s);
-            const end = new Date(e);
-
-            if (start < end) {
-                const diffInTime = end - start;
-                const diffInDays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24));
-                setDuration(diffInDays);
-            } else {
-                console.log("Invalid Dates", "Arrested Date:", start, "Release Date:", end);
-            }
-        }
-    };
-
-
-    const calculate_fine_duration = async (fine) => {
-        const fine_duration = fine / 300;
-        setFineDuration(fine_duration);
-        const total_duration = duration + fine_duration;
-        setTotalDuration(total_duration);
-    }
-
-    const calculate_total_duration = async () => {
-        const total_duration = parseInt(duration) + parseInt(fineDuration);
-        setTotalDuration(total_duration);
-    }
-
-    const fetchCase = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/common/get_cases`);
-            const { Status, Result, Error } = response.data;
-
-            if (Status) {
-                if (Result?.length > 0) {
-                    setCases(Result); //Set the fetched Records
-                } else {
-                    alert("No record Found");
-                }
-            } else {
-                alert(Error || 'Failed to fetch case data.');
-                console.log('Failed to fetch case data.')
-            }
-        } catch (error) {
-            console.error('Error fetching delete case:', error);
-            alert('An error occurred while fetching case data. Please try again.');
-        }
-    };
-
-    const fetchCountry = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/common/get_countries`);
-            const { Status, Result, Error } = response.data;
-
-            if (Status) {
-                if (Result?.length > 0) {
-                    setCountries(Result); //Set the fetched Records
-                } else {
-                    // alert("No record Found");
-                    console.log("No Country Found");
-                }
-            } else {
-                alert(Error || 'Failed to fetch case data.');
-                console.log('Failed to fetch case data.')
-            }
-        } catch (error) {
-            console.error('Error fetching delete case:', error);
-            alert('An error occurred while fetching case data. Please try again.');
-        }
-    };
-
-    const fetchJuidicialbody = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/common/get_juidicialbody`);
-            const { Status, Result, Error } = response.data;
-
-            if (Status) {
-                if (Result?.length > 0) {
-                    setJuidicialbody(Result); //Set the fetched Records
-                } else {
-                    // alert("No record Found");
-                    console.log("No Country Found");
-                }
-            } else {
-                alert(Error || 'Failed to fetch case data.');
-                console.log('Failed to fetch case data.')
-            }
-        } catch (error) {
-            console.error('Error fetching delete case:', error);
-            alert('An error occurred while fetching case data. Please try again.');
-        }
-    };
 
     const fetchAdminOffices = async () => {
         try {
@@ -182,7 +81,7 @@ const AashritForm = () => {
             console.log(data)
             try {
                 // const formData = new FormData();
-                const url = editing ? `${BASE_URL}/prisioner/update_prisioner/${currentData.id}` : `${BASE_URL}/prisioner/add_prisioner`;
+                const url = editing ? `${BASE_URL}/prisioner/update_aashrit/${currentData.id}` : `${BASE_URL}/prisioner/add_aashrit`;
                 const method = editing ? 'PUT' : 'POST';
                 const result = await axios({
                     method, url, data,
@@ -242,23 +141,10 @@ const AashritForm = () => {
 
         setValue('office', record.office_id);
         setValue('prisioner_type', record.prisioner_type);
-        setValue('case_id', record.case_id);
-        setValue('jaherwala', record.jaherwala);
         setValue('name_np', record.name_np);
         setValue('name_en', record.name_en);
-        setValue('country', record.country);
-        setValue('address', record.address);
         setValue('gender', record.gender);
         setValue('dob', record.dob);
-        setValue('arrested', record.arrested);
-        setValue('release_date', record.release_date);
-        setValue('faisala_office', record.faisala_office);
-        setValue('faisala_date', record.faisala_date);
-        setValue('punarabedan', record.punarabedan);
-        setValue('duration', record.duration);
-        setValue('fine', record.fine);
-        setValue('fine_duration', record.fine_duration);
-        setValue('total_duration', record.total_duration);
     };
 
     const handleDelete = async (id) => {
@@ -274,18 +160,21 @@ const AashritForm = () => {
         }
     };
 
-    const [aashritCase, setAashritCase] = useState('');
 
-    const [guardian, setGuardian]=useState([]);
-    const fetchGuardians= async () => {
+    const [guardianOptions, setGuardianOptions] = useState([]);
+    const fetchGuardians = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/prisioner/get_prisioners`);
             const { Status, Result, Error } = response.data;
 
             if (Status) {
                 if (Result?.length > 0) {
-                    setGuardian(Result); //Set the fetched Records
-                    console.log(Result);
+
+                    // console.log(Result);
+                    const guardianOptions = Result.map((data) => ({
+                        label: `${data.name_np || ''} ${'(' + data.case_np + ')' || ''}`, id: data.id
+                    }))
+                    setGuardianOptions(guardianOptions);
                 } else {
                     console.log("No Record Found")
                 }
@@ -303,11 +192,9 @@ const AashritForm = () => {
     useEffect(() => {
         // handleLogin();
         fetchGuardians();
-        fetchCase();
-        fetchRecords();
-        fetchCountry();
-        fetchJuidicialbody();
         fetchAdminOffices();
+        fetchRecords();
+
     }, [])
 
     // console.log(currentofficenp, currentofficeid)
@@ -338,77 +225,36 @@ const AashritForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={4} md={3} mt={2}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.prisioner_type}>
-                                        <InputLabel id="prisioner_type">कैदीको प्रकार</InputLabel>
-                                        <Select
-                                            labelId="type-label"
-                                            id="prisioner_type"
-                                            // defaultValue={prisioner_type}  // Set default value to empty string
-                                            value={prisioner_type}
-                                            {...register('prisioner_type', { required: "This field is required." })}
-                                            onChange={(e) => setPrisioner_type(e.target.value)}
-                                            autoWidth
-                                            label="कैदीको प्रकार"
-                                        >
-                                            <MenuItem value="" disabled><em>कैदीको प्रकार</em></MenuItem>
-                                            <MenuItem value="थुनुवा" key='t0'>थुनुवा</MenuItem>
-                                            <MenuItem value="कैदी" key='t1'>कैदी</MenuItem>
-                                            <MenuItem value="आश्रित" key='t2'>आश्रित</MenuItem>
-                                        </Select>
-                                        {errors.prisioner_type && <p style={{ color: 'red' }}>{errors.prisioner_type.message}</p>} {/* Display validation error */}
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} sm={4} md={3} mt={2}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
-                                        <InputLabel id="prisioner_name">कैदीको नामथर नाम</InputLabel>
-                                        <Select
-                                            labelId="prisioner_name-label"
-                                            id="prisioner_name"
-                                            {...register('prisioner_name', { required: "This field is required." })}
-                                            autoWidth
-                                            label="कैदीको नामथर"
-                                        // defaultValue={currentofficeid}
-                                        >
-
-                                            {guardian.map((data) => (
-                                                <MenuItem value={data.id} key={data.id}> {data.name_np} ({data.prisioner_type}) ({data.case_np})</MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                                {/* <Grid item xs={12} sm={4} md={3} mt={2}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
-                                        <InputLabel id="case_id">मुद्दा</InputLabel>
-                                        <Select
-                                            labelId="rank-label"
-                                            id="case_id"
-                                            value={aashritCase}
-                                            {...register('case_id', { required: "This field is required." })}
-                                            onChange={(e) => setAashritCase(e.target.value)}
-                                            autoWidth
-                                            label="मुद्दा"
-                                        >
-                                            <MenuItem value=""><em>मुद्दा</em></MenuItem>
-                                            {cases.map((data) => (
-                                                <MenuItem value={data.id} key={data.id}>{data.name_np}</MenuItem>
-                                            ))}
-                                        </Select>                                        
-                                    </FormControl>
-                                </Grid> */}
-
-                                <Grid item xs={12} sm={8} md={6} xl={3} hidden>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} >
-                                        <TextField id="jaherwala" label="जाहेरवाला"
-                                            value='-'
-                                            {...register('jaherwala', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.jaherwala}
+                                    <FormControl sx={{ m: 0.5, minWidth: 215 }} error={!!errors.guardian}>
+                                        <Controller
+                                            name="guardian"
+                                            control={control}
+                                            rules={{ required: "This field is required." }}
+                                            render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
+                                                <Autocomplete
+                                                    id="prisioner_name"
+                                                    disablePortal
+                                                    options={guardianOptions}
+                                                    value={value || null} // Ensure controlled value
+                                                    onChange={(_, data) => onChange(data)} // Update form state
+                                                    sx={{ width: 300 }}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            label="कैदीको नामथर नाम"
+                                                            error={!!error} // Highlight error if exists
+                                                            helperText={error ? error.message : null} // Show error message
+                                                            inputRef={ref} // Pass ref to the input
+                                                        />
+                                                    )}
+                                                />
+                                            )}
                                         />
                                     </FormControl>
                                 </Grid>
+
+
+
 
                                 <Grid item xs={12} sm={4} md={3}>
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} error={!!errors.name_np}>
@@ -427,7 +273,7 @@ const AashritForm = () => {
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} >
                                         <TextField
                                             id="name_en"
-                                            value='-'
+                                            // value='-'
                                             label="नाबालकको नाम (अंग्रेजीमा)"
                                             {...register('name_en', { required: "This field is required." })}
                                             fullWidth
@@ -437,41 +283,6 @@ const AashritForm = () => {
                                         {/* {errors.name_en && <p style={{ color: 'red' }}>{errors.name_en.message}</p>} Display validation error */}
                                     </FormControl>
                                 </Grid>
-
-                                <Grid item xs={12} sm={4} md={3} mt={2} hidden>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.country}>
-                                        <InputLabel id="country">देश</InputLabel>
-                                        <Select
-                                            labelId="country-label"
-                                            id="country"
-                                            {...register('country', { required: "This field is required." })}
-                                            autoWidth
-                                            label="देश"
-                                            defaultValue="154"
-                                        >
-                                            <MenuItem value=""><em>देश</em></MenuItem>
-                                            {countries.map((data) => (
-                                                <MenuItem value={data.id} key={data.id} >
-                                                    {data.name_np}</MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} sm={8} md={6} xl={3} hidden>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} >
-                                        <TextField id="address" label="ठेगाना"
-                                            value="-"
-                                            {...register('address', { required: "This field is required." })}
-                                            fullWidth
-                                            margin="normal"
-                                            error={!!errors.address}
-                                        />
-                                        {/* {errors.address && <p style={{ color: 'red' }}>{errors.address.message}</p>} Display validation error */}
-                                    </FormControl>
-                                </Grid>
-
-
                                 <Grid item xs={12} sm={4} md={3} mt={2}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.gender}>
                                         <InputLabel id="gender">लिङ्ग</InputLabel>
@@ -526,63 +337,6 @@ const AashritForm = () => {
                                         </div>
                                     </FormControl>
                                 </Grid>
-
-                                <Grid item xs={12} sm={8} md={6} xl={3} hidden>
-                                    <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.arrested}>
-                                        <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="arrested">थुना परेको मिति<span>*</span></label>
-                                            <Controller
-                                                name="arrested"
-                                                control={control}
-                                                rules={{ required: "This field is required" }}
-                                                render={({ field: { onChange, onBlur, value, ref } }) => (
-                                                    <NepaliDatePicker
-                                                        value={records.arrested} // Ensure empty string when no date is selected
-                                                        onChange={(arrested) => {
-                                                            onChange(arrested); // Update form state
-                                                            setArrestedDate(arrested); // Update state
-                                                            calculate_duration(arrested, '1999-01-01'); // Trigger duration calculation
-                                                        }}
-                                                        onBlur={onBlur} // Handle blur
-                                                        dateFormat="YYYY-MM-DD" // Customize your date format
-                                                        placeholder="Select Nepali Date"
-                                                        ref={ref} // Use ref from react-hook-form
-                                                    />
-                                                )}
-                                            />
-                                            {errors.arrested && <span style={{ color: 'red' }}>{errors.arrested.message}</span>}
-                                        </div>
-                                    </FormControl>
-                                </Grid>
-
-
-                                <Grid item xs={12} sm={8} md={6} xl={3} hidden>
-                                    <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.release_date}>
-                                        <div className="col-xl-3 col-md-4 col-sm-12">
-                                            <label htmlFor="release_date">कैद मुक्त हुने मिति<span>*</span></label>
-                                            <Controller
-                                                name="release_date"
-                                                control={control}
-                                                // rules={{ required: "This field is required" }}
-                                                render={({ field: { onChange, onBlur, value, ref } }) => (
-                                                    <NepaliDatePicker
-                                                        value={records.release_date} // Ensure empty string when no date is selected
-                                                        onChange={(release_date) => {
-                                                            onChange(release_date); // Update form state
-                                                            setReleaseDate(release_date); // Update state
-                                                            calculate_duration(arrestedDate, release_date); // Trigger duration calculation
-                                                        }}
-                                                        onBlur={onBlur} // Handle blur
-                                                        dateFormat="YYYY-MM-DD" // Customize your date format
-                                                        placeholder="Select Nepali Date"
-                                                        ref={ref} // Use ref from react-hook-form
-                                                    />
-                                                )}
-                                            />
-                                            {errors.release_date && <span style={{ color: 'red' }}>{errors.release_date.message}</span>}
-                                        </div>
-                                    </FormControl>
-                                </Grid>
                             </Grid>
                         </Box>
 
@@ -597,7 +351,7 @@ const AashritForm = () => {
                         </div>
                     </form>
                     <div>
-                        
+
                     </div>
                 </div>
             </div >
