@@ -22,8 +22,49 @@ const fy = new NepaliDate().format('YYYY'); //Support for filter
 const fy_date = fy + '-4-1'
 // console.log(fy_date);
 import NepaliDateConverter from 'nepali-date-converter';
-import pkg from 'nepali-date-converter';
-const { getAD, getBS } = pkg;
+
+// Example BS date
+// const dateBS = "2081-10-11"; // BS date as a string in 'YYYY-MM-DD' format
+
+// Convert BS to AD
+// const dateAD = NepaliDateConverter.parse(dateBS);
+
+// console.log('Converted AD Date:', dateAD);
+
+async function updateDobToAD() {
+    try {
+        const sql = `SELECT id, dob FROM prisioners_info WHERE dob IS NOT NULL`;
+        const result = await query(sql);
+
+        for (let i = 0; i < result.length; i++) {
+            const dobBS = result[i].dob;
+            const dobAD = NepaliDateConverter.parse(dobBS);
+            const ad=dobAD.getAD();
+            console.log('DOB_AD', ad);
+
+            // Accessing year, month, and day using methods
+            const year = ad.year;
+            const month = ad.month+1;
+            const day = ad.day+1;
+                   
+            const formattedDobAD = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            console.log('Formatted DOB_AD:', formattedDobAD);
+            
+            const sql1 = `UPDATE prisioners_info SET dob_ad=? WHERE id=?`;
+            const values = [formattedDobAD, result[i].id];
+            const result1 = await query(sql1, values);
+            console.log(result1);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Call the function
+// updateDobToAD();
+
+
+
 function calculateAgeInNepali(dobBS) {
     // const dobBS= '2078-10-11';
     // Split the DOB in BS format
@@ -49,7 +90,7 @@ function calculateAgeInNepali(dobBS) {
 
     // console.log(`Age: ${ageYear} years, ${ageMonth} months, ${ageDay} days`);
     // return { years: ageYear, months: ageMonth, days: ageDay };
-    return {ageYear}
+    return { ageYear }
 }
 
 
@@ -285,8 +326,8 @@ ORDER BY c.name_np
 router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     const { startDate, endDate } = req.query;
-    let age = calculateAgeInNepali('2078-04-01');
-    // console.log(req.query)
+    let age = calculateAgeInNepali('2081-10-11');
+    console.log(age)
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
     c.name_np AS CaseNameNP,
@@ -316,7 +357,7 @@ FROM
     prisioners_info pi
     LEFT JOIN cases c ON pi.case_id = c.id
     LEFT JOIN prisioners_aashrit pa ON pi.id = pa.prisioner_id   
-WHERE 
+WHERE
     pi.office_id = ? 
 GROUP BY 
     pi.case_id, c.name_np, c.name_en
@@ -326,7 +367,6 @@ HAVING
     TotalArrestedInDateRange > 0 OR 
     TotalReleasedInDateRange > 0
 ORDER BY c.name_np;
-
     `;
     // AND 
     // (STR_TO_DATE(pi.karagar_date, '%Y-%m-%d') BETWEEN ? AND ?) 
@@ -339,7 +379,7 @@ ORDER BY c.name_np;
             startDate, endDate
         ]
         const result = await query(sql, params);
-        // console.log(result)
+        console.log(result)
 
         return res.json({ Status: true, Result: result })
     } catch (err) {

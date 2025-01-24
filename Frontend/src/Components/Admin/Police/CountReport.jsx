@@ -189,7 +189,7 @@ const CountPoliceReport = () => {
         headers.forEach((headerRow, index) => {
             const row = worksheet.addRow(headerRow);
             if (index === 0) {
-                row.font = { bold: true, size: 14 };
+                row.font = { bold: true, size: 12 };
             }
             row.alignment = { vertical: 'middle', horizontal: 'center' };
         });
@@ -320,9 +320,9 @@ const CountPoliceReport = () => {
         headers.forEach((headerRow, index) => {
             const row = worksheet.addRow(headerRow);
             if (index === 0) {
-                row.font = { bold: true, size: 14 };
+                row.font = { bold: true, size: 10 };
             }
-            row.font = { bold: true, size: 12 };
+            row.font = { bold: true, size: 10 };
             row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
         });
 
