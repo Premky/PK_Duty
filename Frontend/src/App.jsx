@@ -64,7 +64,7 @@ function App() {
           <Route path='/prisioners' element={<CommonPrisionersTable />} />
           <Route path='/dutymaker' element={<DutyMaker />} />
           <Route path='/aashrit' element={<AashritForm />} />
-
+          <Route path='/count' element={<CountPrisionerReport/>} />
         </Routes>
       </BrowserRouter>
     </>

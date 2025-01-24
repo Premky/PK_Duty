@@ -365,6 +365,7 @@ router.put('/update_release_prisioner/:id', verifyToken, async (req, res) => {
     }
 })
 
+//Aashrit Operation Started
 router.get('/get_aashrit_prisioners', async (req, res) => {
     // console.log('Rank working');
     const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
@@ -382,50 +383,61 @@ router.get('/get_aashrit_prisioners', async (req, res) => {
     }
 });
 
-router.get('/get_report', verifyToken, async (req, res) => {
+router.post('/add_aashrit', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
-    // console.log('mainoffice', userToken.main_office);
     // console.log('User ID:', userToken.uid);
     // console.log('Office ID:', userToken.office);
-    // console.log(current_date)
-    const sql = `SELECT 
-                c.name_np AS CaseNameNP,
-                c.name_en AS CaseNameEN,                    
-                COUNT(*) AS Total,
-                
-                -- Kaidi Total, Male and Female
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'कैदी' AND gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'कैदी' AND gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
-                
-                -- Thunuwa Total, Male and Female
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'थुनुवा' AND gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'थुनुवा' AND gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
-                SUM(CASE WHEN pi.release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, ${current_date}) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
+    const main_office = userToken.main_office
+    // Destructuring the data from the request body
+    const {
+        dob, gender, guardian, name_en, name_np, office_id
+    } = req.body;
 
-                -- Nabalik_Nabalika
-                SUM(CASE WHEN pi.release_id IS NULL AND gender = 'M' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) < 18 THEN 1 ELSE 0 END) AS Nabalak,
-                SUM(CASE WHEN pi.release_id IS NULL AND gender = 'F' AND TIMESTAMPDIFF(YEAR, pi.dob,  ${current_date}) < 18 THEN 1 ELSE 0 END) AS Nabalika
-            FROM 
-                prisioners_info pi
-                LEFT JOIN cases c ON pi.case_id = c.id   
-            WHERE 
-                pi.office_id = ?                     
-            GROUP BY 
-                case_id;
-            `;
+    console.log("Check Data:", { office_id, main_office });
+
+    // Input Validation: Ensure the office_id in the payload matches the user's token
+    if (parseInt(office_id, 10) !== parseInt(main_office, 10)) {
+        return res.status(403).json({
+            Status: false,
+            Error: 'Unauthorized: Invalid office ID.',
+        });
+    }
+
+    // SQL query for inserting prisoner data
+    const sql = `
+        INSERT INTO prisioners_aashrit (
+            dob, gender, prisioner_id,  aashrit_name, office_id, created_by, created_at
+        ) VALUES (?)
+    `;
+
+    // Values for the query, including additional metadata
+    const values = [
+        dob, gender, guardian.id, name_np, office_id,
+        userToken.uid, new Date() // Metadata: User ID and timestamp
+    ];
 
     try {
-        const result = await query(sql, userToken.main_office);
+        // Execute the query
+        const result = await query(sql, [values]);
 
-        return res.json({ Status: true, Result: result })
+        // Respond with success
+        return res.status(201).json({
+            Status: true,
+            Message: 'आश्रीतको विवरण थपियो ।',
+            Result: result,
+        });
     } catch (err) {
-        console.error("Database Query Error:", err);
-        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+        console.error('Database Error:', err);
+
+        // Respond with a generic internal server error
+        return res.status(500).json({
+            Status: false,
+            Error: 'Internal Server Error. Please try again later.',
+        });
     }
 });
+
+
 
 
 export { router as prisionerRouter }

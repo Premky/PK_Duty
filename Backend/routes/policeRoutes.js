@@ -171,8 +171,8 @@ router.get('/get_posts', async (req, res) => {
 });
 
 
-router.post("/generate_duty",  async (req, res) => {
-// router.post("/generate_duty", verifyToken, async (req, res) => {
+router.post("/generate_duty", async (req, res) => {
+    // router.post("/generate_duty", verifyToken, async (req, res) => {
     const user_token = req.user;
     // const officeidbytoken = user_token.officeId;
     const officeidbytoken = 1
@@ -244,5 +244,27 @@ router.get('/ranks', async (req, res) => {
     }
 });
 
+router.get('/police_commander', verifyToken, async (req, res) => {
+    // console.log('Rank working');
+    const userToken = req.user;
+    const main_office = userToken.main_office;
+
+    const sql = `SELECT se.*, r.rank_np as ranknp, r.rank_en as ranken
+                    FROM sec_employe se 
+                    LEFT JOIN sec_ranks r ON se.rank_id = r.id 
+                    WHERE is_active = TRUE AND 
+                    is_commander = TRUE AND 
+                    office_id=?                    
+                    ORDER BY se.id`;
+    // console.log(sql, main_office)
+    try {
+        const result = await query(sql, main_office);
+        // console.log(result);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
 
 export { router as policeRouter };
