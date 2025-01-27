@@ -101,7 +101,7 @@ const CommonPrisionersTable = () => {
                             <TableCell>{record.address}</TableCell>
                             <TableCell>{record.age}</TableCell>
                             <TableCell>{record.release_date}</TableCell>
-                            <TableCell>{record.release_reason}</TableCell>
+                            <TableCell>{record.reason_np}</TableCell>
                             <TableCell>
                                 <Button onClick={() => onEdit(record)} variant="outlined" color="primary">
                                     <EditIcon/>

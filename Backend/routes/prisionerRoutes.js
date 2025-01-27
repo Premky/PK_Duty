@@ -302,7 +302,7 @@ router.get('/get_release_prisioners/:id', async (req, res) => {
 router.get('/get_released_prisioners', async (req, res) => {
     const userToken = req.user;
     // console.log(userToken);
-    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
+    const sql = `SELECT pi.*, c.name_np AS case_np, prr.reasons_np AS reason_np
                 FROM prisioners_release_details prd
                 LEFT JOIN prisioners_info pi ON prd.prisioners_id = pi.id
                 LEFT JOIN cases c ON pi.case_id = c.id
