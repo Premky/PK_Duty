@@ -15,6 +15,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 
+import ReleasedPrisionersTable from './ReleasedPrisionersTable';
 // import PoliceRecordTable from './PoliceRecordTable';
 // import Select from '@mui/material'
 
@@ -39,6 +40,7 @@ const PrisionerReleaseForm = () => {
     const [adminOffice, setAdminOffice] = useState([]);
     const [prisioners, setPrisioners] = useState([]);
     const [records, setRecords] = useState([]);
+    const [releaseReasons, setReleaseReasons] = useState([]);
 
     const fetchAdminOffices = async () => {
         try {
@@ -59,6 +61,28 @@ const PrisionerReleaseForm = () => {
         } catch (error) {
             console.error('Error fetching delete case:', error);
             alert('An error occurred while fetching case data. Please try again.');
+        }
+    };
+
+    const fetchReleaseReasons = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/common/get_release_reasons`);
+            const { Status, Result, Error } = response.data;
+
+            if (Status) {
+                if (Result?.length > 0) {
+                    setReleaseReasons(Result); //Set the fetched Records
+                } else {
+                    // alert("No record Found");
+                    console.log("No Reasons Found");
+                }
+            } else {
+                alert(Error || 'Failed to fetch reason data.');
+                console.log('Failed to fetch reason data.')
+            }
+        } catch (error) {
+            console.error('Error fetching delete reason:', error);
+            alert('An error occurred while fetching reason data. Please try again.');
         }
     };
 
@@ -118,6 +142,7 @@ const PrisionerReleaseForm = () => {
     useEffect(() => {
         fetchRecords();
         fetchAdminOffices();
+        fetchReleaseReasons();
     }, [])
     return (
         <React.Fragment>
@@ -147,7 +172,7 @@ const PrisionerReleaseForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={4} md={3} mt={2}>
-                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.prisioner_name}>
                                         <InputLabel id="prisioner_name">कैदीको नामथर नाम</InputLabel>
                                         <Select
                                             labelId="prisioner_name-label"
@@ -165,9 +190,26 @@ const PrisionerReleaseForm = () => {
                                     </FormControl>
                                 </Grid>
 
+                                <Grid item xs={12} sm={4} md={3} mt={2}>
+                                    <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.reason}>
+                                        <InputLabel id="reason">छुटेको कारण</InputLabel>
+                                        <Select
+                                            labelId="reason-label"
+                                            id="reason"
+                                            {...register('reason', { required: "This field is required." })}
+                                            autoWidth
+                                            label="छुटेको कारण"
+                                        // defaultValue={currentofficeid}
+                                        >
 
+                                            {releaseReasons.map((data) => (
+                                                <MenuItem value={data.id} key={data.id}> {data.reasons_np}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
 
-                                <Grid item xs={12} sm={8} md={6} xl={3}>
+                                {/* <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{ m: .5, minWidth: 215 }} >
                                         <TextField id="reason" label="कारण"
                                             {...register('reason', { required: "This field is required." })}
@@ -176,7 +218,7 @@ const PrisionerReleaseForm = () => {
                                             error={!!errors.reason}
                                         />
                                     </FormControl>
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
                                     <FormControl sx={{
@@ -296,7 +338,7 @@ const PrisionerReleaseForm = () => {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12} sm={4} md={3}>
+                                {/* <Grid item xs={12} sm={4} md={3}>
                                     <FormControl sx={{ m: 0.5, minWidth: 215 }} error={!!errors.aafanta_photo}>
                                         <TextField
                                             id="aafanta_photo"
@@ -307,7 +349,7 @@ const PrisionerReleaseForm = () => {
                                             error={!!errors.aafanta_photo}
                                         />
                                     </FormControl>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                         </Box>
 
@@ -323,11 +365,11 @@ const PrisionerReleaseForm = () => {
                     </form>
                 </div>
             </div >
-            {/* <PrisionersRecordTable
+            <ReleasedPrisionersTable
                 records={records}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-            /> */}
+                // onEdit={handleEdit}
+                // onDelete={handleDelete}
+            />
         </React.Fragment >
     )
 }

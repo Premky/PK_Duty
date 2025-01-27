@@ -260,6 +260,19 @@ router.get('/get_blood_group', async (req, res) => {
     }
 });
 
+router.get('/get_release_reasons', async (req, res) => {
+    // console.log('Case working');
+
+    const sql = `SELECT * FROM prisioners_release_reasons ORDER BY reasons_np`;
+    try {
+        const result = await query(sql, false);
+        return res.json({ Status: true, Result: result })
+    } catch (err) {
+        console.error("Database Query Error:", err);
+        res.status(500).json({ Status: false, Error: "Internal Server Error" });
+    }
+});
+
 router.get('/get_prisioners_report0', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     const { startDate, endDate } = req.query;

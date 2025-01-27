@@ -300,10 +300,14 @@ router.get('/get_release_prisioners/:id', async (req, res) => {
 
 //Get Released Records
 router.get('/get_released_prisioners', async (req, res) => {
-    // console.log('Rank working');
+    const userToken = req.user;
+    // console.log(userToken);
     const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
-                FROM prisioners_info pi
+                FROM prisioners_release_details prd
+                LEFT JOIN prisioners_info pi ON prd.prisioners_id = pi.id
                 LEFT JOIN cases c ON pi.case_id = c.id
+                LEFT JOIN prisioners_release_reasons prr ON prd.reason = prr.id
+                WHERE pi.release_id IS NOT NULL
                 ORDER BY pi.name_np ASC`;
 
     try {
