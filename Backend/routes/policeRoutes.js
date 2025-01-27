@@ -71,7 +71,8 @@ router.get('/get_police_records', async (req, res) => {
     // console.log('Rank working');
     const sql = `SELECT se.*, r.rank_np as ranknp, r.rank_en as ranken
                     FROM sec_employe se 
-                    LEFT JOIN sec_ranks r ON se.rank_id = r.id                    
+                    LEFT JOIN sec_ranks r ON se.rank_id = r.id   
+                    WHERE is_active = TRUE                 
                     ORDER BY se.id`;
     try {
         const result = await query(sql);

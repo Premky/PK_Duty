@@ -26,41 +26,13 @@ const CountPoliceReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
-
-    // const today = new Date();
-    // const sevenDaysAgo = new Date(today);
-    // sevenDaysAgo.setDate(today.getDate() - 7);
-    // console.log('Seven Days Ago:', sevenDaysAgo); // Check this value
-
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
-    // const datebefore7days = new NepaliDate(npToday)
-    // datebefore7days.setDate(npToday.getDate() - 7);
-    // const formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');
 
-    let formatteddatebefore7days = formattedDateNp;
-    try {
-        const datebefore7days = new NepaliDate(npToday);
-        // console.log(datebefore7days)
-        const currentNepaliDate = { year: dateData.year, month: dateData.month, day: dateData.day };
-        const currentEnglishDate = { year: dateData.yearEn, month: dateData.monthEn + 1, day: dateData.dayEn }; // Adjust monthEn to 1-based
-
-        // Calculate 7 days before
-        const nepaliDateBefore7Days = calculateNepaliDate(currentNepaliDate.year, currentNepaliDate.month, currentNepaliDate.day, 7);
-        const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object
-        // datebefore7days.setDate(npToday.getDate() - 7);
-        // formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');        
-
-    } catch (error) {
-        console.error("Error calculating date before 7 days:", error);
-        formatteddatebefore7days = formattedDateNp; // Handle the case where the date is invalid
-    }
-
-    // console.log(formattedDateNp, formatteddatebefore7days)
 
     const { register, handleSubmit, reset, setValue, formState: { errors }, control } = useForm({
         defaultValues: {
-            startDate: formatteddatebefore7days,
+            startDate: formattedDateNp,
             endDate: formattedDateNp
         },
     });
@@ -78,7 +50,7 @@ const CountPoliceReport = () => {
         Total: 0,
     });
 
-    const [start_Date, setStart_Date] = useState(formatteddatebefore7days);
+    const [start_Date, setStart_Date] = useState(formattedDateNp);
     const [end_Date, setEnd_Date] = useState(formattedDateNp);
 
     const fetchRecords = async (data) => {
@@ -88,10 +60,10 @@ const CountPoliceReport = () => {
             const url = `${BASE_URL}/common/get_prisioners_report`;
 
             const queryParams = new URLSearchParams({
-                startDate: data?.startDate || formatteddatebefore7days,
+                startDate: data?.startDate || formattedDateNp,
                 endDate: data?.endDate || formattedDateNp,
             }).toString();
-
+            console.log(queryParams)
             const fullUrl = `${url}?${queryParams}`;
 
             const response = await axios.get(fullUrl, {
@@ -118,6 +90,7 @@ const CountPoliceReport = () => {
             alert('An error occured while fetching records.');
         }
     };
+
     const [policeCommander, setPoliceCommander] = useState([]);
     const fetchPoliceCommander = async (data) => {
         try {
@@ -157,14 +130,22 @@ const CountPoliceReport = () => {
                 ThunuwaFemale: acc.ThunuwaFemale + (parseInt(record.ThunuwaFemale) || 0),
                 SumOfArrestedInDateRange: acc.SumOfArrestedInDateRange + (parseInt(record.TotalArrestedInDateRange) || 0),
                 SumOfReleasedInDateRange: acc.SumOfReleasedInDateRange + (parseInt(record.TotalReleasedInDateRange) || 0),
+                KaidiAgeAbove65: acc.KaidiAgeAbove65 + (parseInt(record.KaidiAgeAbove65) || 0),
                 ThunuwaAgeAbove65: acc.ThunuwaAgeAbove65 + (parseInt(record.ThunuwaAgeAbove65) || 0),
                 Nabalak: acc.Nabalak + (parseInt(record.Nabalak) || 0),
                 Nabalika: acc.Nabalika + (parseInt(record.Nabalika) || 0),
+                TotalMaleReleasedInDateRange: acc.TotalMaleReleasedInDateRange + (parseInt(record.TotalMaleReleasedInDateRange) || 0),
+                TotalFemaleReleasedInDateRange: acc.TotalFemaleReleasedInDateRange + (parseInt(record.TotalFemaleReleasedInDateRange) || 0),
+                TotalMaleArrestedInDateRange: acc.TotalMaleArrestedInDateRange + (parseInt(record.TotalMaleArrestedInDateRange) || 0),
+                TotalFemaleArrestedInDateRange: acc.TotalFemaleArrestedInDateRange + (parseInt(record.TotalFemaleArrestedInDateRange) || 0),
                 Total: acc.Total + (parseInt(record.Total) || 0),
             }),
             {
                 KaidiTotal: 0, ThunuwaTotal: 0, KaidiMale: 0, KaidiFemale: 0, ThunuwaMale: 0, ThunuwaFemale: 0,
-                SumOfArrestedInDateRange: 0, SumOfReleasedInDateRange: 0, ThunuwaAgeAbove65: 0, Nabalak: 0, Nabalika: 0, Total: 0
+                SumOfArrestedInDateRange: 0, SumOfReleasedInDateRange: 0, 
+                KaidiAgeAbove65: 0, ThunuwaAgeAbove65: 0, 
+                TotalMaleArrestedInDateRange:0,TotalFemaleArrestedInDateRange:0, TotalMaleReleasedInDateRange: 0, TotalFemaleReleasedInDateRange: 0,
+                Nabalak: 0, Nabalika: 0, Total: 0
             }
         );
         setTotals(totals);
@@ -296,6 +277,7 @@ const CountPoliceReport = () => {
 
     useEffect(() => {
         fetchRecords();
+
         fetchPoliceCommander();
     }, [])
 
@@ -392,105 +374,95 @@ const CountPoliceReport = () => {
                     <Table size='small'>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" colSpan={8}>____सालको _____ महिनाको मसान्तसम्मको बन्दी संख्याः____ जना</TableCell>
+                                <TableCell align="" colSpan={6}>____सालको _____ महिनाको मसान्तसम्मको बन्दी संख्याः____ जना</TableCell>
                             </TableRow>
                             <TableRow className='bg-primary'>
                                 <TableCell align="center" >सि.नं.</TableCell>
-                                <TableCell align="center" colSpan={6}>विवरण</TableCell>
-                                <TableCell align="center" colSpan={2}>पुरुष</TableCell>
-                                <TableCell align="center" colSpan={2}>महिला</TableCell>
-                                <TableCell align="center" colSpan={2}>जम्मा</TableCell>
-                                <TableCell align="center" colSpan={2}>कैफियत</TableCell>
+                                <TableCell align="center" colSpan={0}>विवरण</TableCell>
+                                <TableCell align="center" >पुरुष</TableCell>
+                                <TableCell align="center" >महिला</TableCell>
+                                <TableCell align="center" >जम्मा</TableCell>
+                                <TableCell align="center" >कैफियत</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow className=''>
                                 <TableCell align="center">१</TableCell>
-                                <TableCell align="center" colSpan={6}>अघिल्लाो महिनाको संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>अघिल्लाो महिनाको संख्या</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">२</TableCell>
-                                <TableCell align="center" colSpan={6}>यस महिनाको थप संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>यस महिनाको थप संख्या</TableCell>
+                                <TableCell align="center" >{totals.TotalMaleArrestedInDateRange}</TableCell>
+                                <TableCell align="center" >{totals.TotalFemaleArrestedInDateRange}</TableCell>
+                                <TableCell align="center" >{totals.SumOfArrestedInDateRange}</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">३</TableCell>
-                                <TableCell align="center" colSpan={6}>यस महिनाको छुटेका संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>यस महिनाको छुटेका संख्या</TableCell>
+                                <TableCell align="center" >{totals.TotalMaleReleasedInDateRange}</TableCell>
+                                <TableCell align="center" >{totals.TotalFemaleReleasedInDateRange}</TableCell>
+                                <TableCell align="center" >{totals.SumOfReleasedInDateRange}</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">४</TableCell>
-                                <TableCell align="center" colSpan={6}>यस महिनामा सरुवा भएको संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>यस महिनामा सरुवा भएको संख्या</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">५</TableCell>
-                                <TableCell align="center" colSpan={6}>यस महिनामा मृत्यु भएको संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>यस महिनामा मृत्यु भएको संख्या</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">५</TableCell>
-                                <TableCell align="center" colSpan={6}>यस महिनामा कायम रहेको कैदीबन्दी संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>यस महिनामा कायम रहेको कैदीबन्दी संख्या</TableCell>
+                                <TableCell align="center" >{parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale)}</TableCell>
+                                <TableCell align="center" >{parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale)}</TableCell>
+                                <TableCell align="center" >
+                                    {parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale) + parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale)}
+                                </TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">७</TableCell>
-                                <TableCell align="center" colSpan={6}>हालको आश्रित बालबालिकाको संख्या</TableCell>
+                                <TableCell align="" colSpan={0}>हालको आश्रित बालबालिकाको संख्या</TableCell>
+                                <TableCell align="center" >{totals.Nabalak}</TableCell>
+                                <TableCell align="center" >{totals.Nabalika}</TableCell>
+                                <TableCell align="center" >{parseInt(totals.Nabalak) + parseInt(totals.Nabalika)}</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center"></TableCell>
-                                <TableCell align="center" colSpan={6}>जम्मा</TableCell>
+                                <TableCell align="" colSpan={0}>जम्मा</TableCell>
+                                <TableCell align="center" >
+                                    {parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale) + parseInt(totals.Nabalak)}
+                                </TableCell>
+                                <TableCell align="center" >{parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale) + parseInt(totals.Nabalika)}</TableCell>
+                                <TableCell align="center" >
+                                    {parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale) + parseInt(totals.Nabalak) + parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale) + parseInt(totals.Nabalika)}
+                                </TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -512,16 +484,16 @@ const CountPoliceReport = () => {
                             </TableRow>
                             <TableRow>
                                 <TableCell align="center" className='bg-secondary'>कैदी</TableCell>
-                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>                                
+                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>
                                 <TableCell align="center" className='bg-secondary fw-bold'>जम्मा</TableCell>
                                 <TableCell align="center" className='bg-secondary bg-gradient'>कैदी</TableCell>
-                                <TableCell align="center" className='bg-secondary bg-gradient'>थुनुवा</TableCell>                                
+                                <TableCell align="center" className='bg-secondary bg-gradient'>थुनुवा</TableCell>
                                 <TableCell align="center" className='bg-secondary'>कैदी</TableCell>
-                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>                                
+                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>
                                 <TableCell align="center" className='bg-secondary bg-gradient'>नाबालक</TableCell>
-                                <TableCell align="center" className='bg-secondary bg-gradient'>नाबालिका</TableCell>                                
+                                <TableCell align="center" className='bg-secondary bg-gradient'>नाबालिका</TableCell>
                                 <TableCell align="center" className='bg-secondary'>कैदी</TableCell>
-                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>                                                                
+                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>
                             </TableRow>
                         </TableHead>
 
@@ -535,8 +507,8 @@ const CountPoliceReport = () => {
                                     <TableCell align='center' className='fw-bold'>{parseInt(record.ThunuwaTotal) + parseInt(record.KaidiTotal)}</TableCell>
                                     <TableCell align='center' className='bg-gradient'>{record.KaidiMale}</TableCell>
                                     <TableCell align='center' className='bg-gradient'>{record.ThunuwaMale}</TableCell>
-                                    <TableCell align='center'>{record.KaidiFemale}</TableCell>                                    
-                                    <TableCell align='center'>{record.ThunuwaFemale}</TableCell>                                    
+                                    <TableCell align='center'>{record.KaidiFemale}</TableCell>
+                                    <TableCell align='center'>{record.ThunuwaFemale}</TableCell>
                                     <TableCell align='center' className='bg-gradient'>{record.Nabalak}</TableCell>
                                     <TableCell align='center' className='bg-gradient'>{record.Nabalika}</TableCell>
 
@@ -555,9 +527,8 @@ const CountPoliceReport = () => {
                                 <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.KaidiMale) + parseInt(totals.KaidiFemale)}</TableCell>
                                 <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaMale}</TableCell>
                                 <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaFemale}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.ThunuwaMale) + parseInt(totals.ThunuwaFemale)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfArrestedInDateRange}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfReleasedInDateRange}</TableCell>
+                                <TableCell align='center' className='bg-success fw-bold'>{totals.KaidiAgeAbove65}</TableCell>
+                                <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaAgeAbove65}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

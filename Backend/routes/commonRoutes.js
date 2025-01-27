@@ -326,8 +326,7 @@ ORDER BY c.name_np
 router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     const { startDate, endDate } = req.query;
-    let age = calculateAgeInNepali('2081-10-11');
-    console.log(age)
+    console.log(req.query);
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
     c.name_np AS CaseNameNP,
@@ -338,13 +337,13 @@ router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND pi.gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND pi.gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
-    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
 
     -- Thunuwa Total, Male, Female, and Age Above 65
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND pi.gender = 'M' THEN 1 ELSE 0 END) AS ThunuwaMale,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND pi.gender = 'F' THEN 1 ELSE 0 END) AS ThunuwaFemale,
-    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
 
     -- Nabalak and Nabalika
     SUM(CASE WHEN release_id IS NULL AND pa.gender = 'M' THEN 1 ELSE 0 END) AS Nabalak,
@@ -352,7 +351,12 @@ router.get('/get_prisioners_report', verifyToken, async (req, res) => {
 
     -- Total within date range
     SUM(CASE WHEN release_id IS NULL AND (pi.karagar_date BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
-    SUM(CASE WHEN (pi.released_date BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange
+    SUM(CASE WHEN release_id IS NULL AND ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'M') THEN 1 ELSE 0 END) AS TotalMaleArrestedInDateRange,
+    SUM(CASE WHEN release_id IS NULL AND ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'F') THEN 1 ELSE 0 END) AS TotalFemaleArrestedInDateRange,
+    
+    SUM(CASE WHEN (pi.released_date BETWEEN ? AND ? ) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange,
+    SUM(CASE WHEN ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'M') THEN 1 ELSE 0 END) AS TotalMaleReleasedInDateRange,
+    SUM(CASE WHEN ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'F') THEN 1 ELSE 0 END) AS TotalFemaleReleasedInDateRange
 FROM 
     prisioners_info pi
     LEFT JOIN cases c ON pi.case_id = c.id
@@ -373,13 +377,17 @@ ORDER BY c.name_np;
 
     try {
         const params = [
-            startDate, endDate,
-            startDate, endDate,
+            startDate, endDate, //Total Arrested
+            startDate, endDate, //Male Arrested
+            startDate, endDate, //Female Arrested
+            startDate, endDate, //Total Released
+            startDate, endDate, //Male Released
+            startDate, endDate, //Female Released
             userToken.main_office,
             startDate, endDate
         ]
         const result = await query(sql, params);
-        console.log(result)
+        // console.log(result)
 
         return res.json({ Status: true, Result: result })
     } catch (err) {

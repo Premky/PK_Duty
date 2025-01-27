@@ -40,6 +40,9 @@ const PoliceForm = () => {
     const [ranks, setRanks] = useState([]);
     const [blood, setBlood] = useState([]);
     const [selectedRank, setSelectedRank] = useState('');
+    const [selectedBloodGroup, setSelectedBloodGroup] = useState('');
+    const [selectedGender, setSelectedGender] = useState('');
+    const [selectedEmpStatus, setSelectedEmpStatus] = useState('');
 
     const [records, setRecords] = useState([]); //Holds the records added or fetched for editing;
 
@@ -117,8 +120,13 @@ const PoliceForm = () => {
     };
 
     const handleEdit = (record) => {
-        setCurrentData(record);
+        setCurrentData(record);        
+        setSelectedRank(record.rank_id);
+        setSelectedBloodGroup(record.blood_group);
+        setSelectedGender(record.gender);
+        setSelectedEmpStatus(record.is_active);
         setEditing(true);
+        setValue('rank_id', record.rank_id);
         setValue('name_np', record.name_np);
         setValue('name_en', record.name_en);
         setValue('address', record.address);
@@ -274,14 +282,14 @@ const PoliceForm = () => {
                                 </Grid>
 
                                 <Grid item xs={12} sm={8} md={6} xl={3}>
-                                <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.rank}>
+                                <FormControl sx={{ m: .5, minWidth: 215 }} error={!!errors.blood_group}>
                                         <InputLabel id="blood_group">रक्त समुह</InputLabel>
                                         <Select
                                             labelId="blood_group-label"
                                             id="blood_group"
-                                            // value={selectedRank}
+                                            value={selectedBloodGroup}
                                             {...register('blood_group', { required: "This field is required." })}
-                                            // onChange={(e) => setSelectedRank(e.target.value)}
+                                            onChange={(e) => setSelectedBloodGroup(e.target.value)}
                                             autoWidth
                                             label="रक्त समुह"
                                         >
@@ -302,8 +310,10 @@ const PoliceForm = () => {
                                         <Select
                                             labelId="gender-label"
                                             id="gender"
+                                            value={selectedGender}
                                             defaultValue=""  // Set default value to empty string
                                             {...register('gender', { required: "This field is required." })}
+                                            onChange={(e) => setSelectedGender(e.target.value)}
                                             autoWidth
                                             label="लिङ्ग"
                                         >
@@ -470,8 +480,10 @@ const PoliceForm = () => {
                                         <Select
                                             labelId="is_active-label"
                                             id="is_active"
+                                            value={selectedEmpStatus}
                                             defaultValue=""  // Set default value to empty string
                                             {...register('is_active', { required: "This field is required." })}
+                                            onChange={(e) => setSelectedEmpStatus(e.target.value)}
                                             autoWidth
                                             label="हाल कार्यरत"
                                         >
