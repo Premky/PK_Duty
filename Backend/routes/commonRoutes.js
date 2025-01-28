@@ -336,10 +336,12 @@ ORDER BY c.name_np
     }
 });
 
+
+
 router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     const { startDate, endDate } = req.query;
-    console.log(req.query);
+    // console.log(req.query);
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
     c.name_np AS CaseNameNP,

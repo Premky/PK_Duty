@@ -52,6 +52,7 @@ const CountPoliceReport = () => {
 
     const [start_Date, setStart_Date] = useState(formattedDateNp);
     const [end_Date, setEnd_Date] = useState(formattedDateNp);
+    const [releasedCounts, setReleasedCounts] = useState([]);
 
     const fetchRecords = async (data) => {
         // if (!data) { data = nul`l }
@@ -88,6 +89,37 @@ const CountPoliceReport = () => {
         } catch (error) {
             console.error('Error fetching records:', error);
             alert('An error occured while fetching records.');
+        }
+    };
+
+    const fetchReleasedCounts = async (data) => {
+        try {
+            const url = `${BASE_URL}/prisioner/get_released_counts`;
+            const queryParams = new URLSearchParams({                
+                endDate: data?.endDate || formattedDateNp,
+            }).toString();
+            const fullUrl = `${url}?${queryParams}`;
+
+            const response = await axios.get(fullUrl, {
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true, // If cookies are required
+            });
+
+            const { Status, Result, Error } = response.data;
+
+            if (Status) {
+                if (Result?.length > 0) {
+                    setReleasedCounts(Result);
+                    console.log("Fetched data:", Result);
+                } else {
+                    console.log("No Record Found");
+                }
+            } else {
+                console.log(Error || "Failed to fetch records.");
+            }
+        } catch (error) {
+            console.error("Error fetching records:", error);
+            alert("An error occurred while fetching records.");
         }
     };
 
@@ -277,8 +309,8 @@ const CountPoliceReport = () => {
 
     useEffect(() => {
         fetchRecords();
-
         fetchPoliceCommander();
+        fetchReleasedCounts();
     }, [])
 
     return (

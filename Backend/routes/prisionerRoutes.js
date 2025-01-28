@@ -17,10 +17,31 @@ const query = promisify(con.query).bind(con);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import NepaliDateConverter from 'nepali-date-converter';
 const current_date = new NepaliDate().format('YYYY-MM-DD');
 const fy = new NepaliDate().format('YYYY'); //Support for filter
 const fy_date = fy + '-4-1'
 // console.log(current_date);
+
+function converttoad(bsdate) {
+    try {
+        const dobAD = NepaliDateConverter.parse(bsdate);
+        const ad = dobAD.getAD();
+        console.log('DOB_AD', ad);
+        // Accessing year, month, and day using methods
+        const year = ad.year;
+        const month = ad.month + 1;
+        const date = ad.date;   
+        const day = ad.day+1;     
+        const formattedDobAD = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+        // console.log('Formatted DOB_AD:', formattedDobAD);
+        return formattedDobAD;
+    }
+    catch (err) {
+    console.error(err);
+}
+}
+console.log(converttoad('2081-10-01'));
 
 router.post('/add_prisioner', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
@@ -34,6 +55,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
         office_id, prisioner_type, punarabedan, release_date, total_duration
     } = req.body;
 
+
     console.log("Check Data:", { office_id, main_office });
 
     // Input Validation: Ensure the office_id in the payload matches the user's token
@@ -43,11 +65,11 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
             Error: 'Unauthorized: Invalid office ID.',
         });
     }
-
+    const ad_dob = converttoad(dob);
     // SQL query for inserting prisoner data
     const sql = `
         INSERT INTO prisioners_info (
-            address, arrested, case_id, country, dob, duration, faisala_date,
+            address, arrested, case_id, country, dob, dob_ad, duration, faisala_date,
             faisala_office, fine, fine_duration, gender, jaherwala, karagar_date, name_en, name_np,
             office_id, prisioner_type, punarabedan, release_date, total_duration, created_by, created_at
         ) VALUES (?)
@@ -55,7 +77,7 @@ router.post('/add_prisioner', verifyToken, async (req, res) => {
 
     // Values for the query, including additional metadata
     const values = [
-        address, arrested, case_id, country, dob, duration, faisala_date,
+        address, arrested, case_id, country, dob, ad_dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, karagar_date, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration,
         userToken.uid, new Date() // Metadata: User ID and timestamp
@@ -131,12 +153,12 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
     // console.log('office', user_token.office);
 
     const id = req.params.id;
-
     const { address, arrested, case_id, country, dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration } = req.body;
-    console.log("Check Data:", id);
-
+        console.log("Check Data:", id);
+    const ad_dob = converttoad(dob);
+        
     //Input Validation
     if (parseInt(office_id, 10) !== parseInt(userToken.main_office, 10)) {
         return res.status(403).json({
@@ -147,11 +169,11 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
 
     const sql = `UPDATE prisioners_info 
                 SET
-                address=?, arrested=?, case_id=?, country=?, dob=?, duration=?, faisala_date=?,
+                address=?, arrested=?, case_id=?, country=?, dob=?, dob_ad=?, duration=?, faisala_date=?,
                 faisala_office=?, fine=?, fine_duration=?, gender=?, jaherwala=?, name_en=?, name_np=?,
                 office_id=?, prisioner_type=?, punarabedan=?, release_date=?, total_duration=?,
                 updated_by=?, updated_at=? WHERE id=?`;
-    const values = [address, arrested, case_id, country, dob, duration, faisala_date,
+    const values = [address, arrested, case_id, country, dob, ad_dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration,
         userToken.uid, new Date(), id
@@ -441,7 +463,51 @@ router.post('/add_aashrit', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/get_released_counts', verifyToken, async (req, res) => {
+    const userToken = req.user; // Extract details from the token
+    const endDate = req.query.endDate;
+    const curr_year = new NepaliDate().format('YYYY');
+    const curr_month = new NepaliDate().format('MM');
+    const prev_month = new NepaliDate().format('MM') - 1;
+    const curr_day = new NepaliDate().format('DD');
 
+    const prev_month_date = curr_year + '-' + prev_month + '-' + curr_day;
+    const this_month = curr_year + '-' + curr_month + '-' + 1;
+    console.log(prev_month_date);
+
+    console.log(req.query)
+    // console.log('mainoffice', userToken.main_office);    
+    const sql = `SELECT 
+     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
+     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
+     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalWorkYear,
+     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalWorkMonth,
+        COUNT(*) AS Total
+        FROM prisioners_info pi
+        LEFT JOIN prisioners_release_details prd ON pi.release_id = prd.id
+        `;
+    console.log(sql);
+    try {
+        // Execute the query
+        const result = await query(sql);
+
+        // Respond with success
+        return res.status(201).json({
+            Status: true,
+            Message: 'आश्रीतको विवरण थपियो ।',
+            Result: result,
+
+        });
+    } catch (err) {
+        console.error('Database Error:', err);
+
+        // Respond with a generic internal server error
+        return res.status(500).json({
+            Status: false,
+            Error: 'Internal Server Error. Please try again later.',
+        });
+    }
+});
 
 
 export { router as prisionerRouter }

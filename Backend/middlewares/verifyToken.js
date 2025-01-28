@@ -21,7 +21,7 @@ const verifyToken = (req, res, next) => {
             return res.status(403).json({ message: "Forbidden: Invalid token" });
         }
 
-        console.log('Decoded token:', decoded);
+        // console.log('Decoded token:', decoded);
         
         req.user = decoded; // Attach the decoded user data to the request
         next();
