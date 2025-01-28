@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import axios from 'axios'
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition, Suspense } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
