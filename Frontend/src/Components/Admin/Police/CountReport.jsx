@@ -353,7 +353,7 @@ const CountPoliceReport = () => {
                         </button>
                     </div>
                 </form>
-                <button onClick={exportToExcel}>Export</button>
+                <button onClick={exportToExcel} className='btn btn-sm btn-success'>Download</button>
             </div>
             <div className="report_data">
                 <TableContainer component={Paper} sx={{ mt: 4 }}>
