@@ -612,7 +612,7 @@ const PrisionersForm = () => {
                                             <Controller
                                                 name="release_date"
                                                 control={control}
-                                                rules={{ required: "This field is required" }}
+                                                // rules={{ required: "This field is required" }}
                                                 render={({ field: { onChange, onBlur, value, ref } }) => (
                                                     <DateInputField
                                                         name="release_date"
