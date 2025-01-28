@@ -352,7 +352,7 @@ router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' THEN 1 ELSE 0 END) AS KaidiTotal,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND pi.gender = 'M' THEN 1 ELSE 0 END) AS KaidiMale,
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND pi.gender = 'F' THEN 1 ELSE 0 END) AS KaidiFemale,
-    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,                
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS KaidiAgeAbove65,
 
     -- Thunuwa Total, Male, Female, and Age Above 65
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' THEN 1 ELSE 0 END) AS ThunuwaTotal,
@@ -365,28 +365,29 @@ router.get('/get_prisioners_report', verifyToken, async (req, res) => {
     SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Nabalika,
 
     -- Total within date range
-    
-    SUM(CASE WHEN (pi.karagar_date BETWEEN ? AND ?) THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
-    SUM(CASE WHEN release_id IS NULL AND ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'M') THEN 1 ELSE 0 END) AS TotalMaleArrestedInDateRange,
-    SUM(CASE WHEN release_id IS NULL AND ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'F') THEN 1 ELSE 0 END) AS TotalFemaleArrestedInDateRange,
-    
-    SUM(CASE WHEN (pi.released_date BETWEEN ? AND ? ) THEN 1 ELSE 0 END) AS TotalReleasedInDateRange,
-    SUM(CASE WHEN ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'M') THEN 1 ELSE 0 END) AS TotalMaleReleasedInDateRange,
-    SUM(CASE WHEN ((pi.released_date BETWEEN ? AND ?) AND pi.gender = 'F') THEN 1 ELSE 0 END) AS TotalFemaleReleasedInDateRange
-    FROM 
-        prisioners_info pi
-        LEFT JOIN cases c ON pi.case_id = c.id
-        LEFT JOIN prisioners_aashrit pa ON pi.id = pa.prisioner_id   
-    WHERE
-        pi.office_id = ? 
-    GROUP BY 
-        pi.case_id, c.name_np, c.name_en
-    HAVING 
-        KaidiTotal > 0 OR 
-        ThunuwaTotal > 0 OR 
-        TotalArrestedInDateRange > 0 OR 
-        TotalReleasedInDateRange > 0
-    ORDER BY c.name_np;
+    SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
+    SUM(CASE WHEN release_id IS NULL AND pi.karagar_date BETWEEN ? AND ? AND pi.gender = 'M' THEN 1 ELSE 0 END) AS TotalMaleArrestedInDateRange,
+    SUM(CASE WHEN release_id IS NULL AND pi.karagar_date BETWEEN ? AND ? AND pi.gender = 'F' THEN 1 ELSE 0 END) AS TotalFemaleArrestedInDateRange,
+
+    SUM(CASE WHEN pi.released_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalReleasedInDateRange,
+    SUM(CASE WHEN pi.released_date BETWEEN ? AND ? AND pi.gender = 'M' THEN 1 ELSE 0 END) AS TotalMaleReleasedInDateRange,
+    SUM(CASE WHEN pi.released_date BETWEEN ? AND ? AND pi.gender = 'F' THEN 1 ELSE 0 END) AS TotalFemaleReleasedInDateRange
+FROM 
+    prisioners_info pi
+LEFT JOIN cases c ON pi.case_id = c.id
+LEFT JOIN prisioners_aashrit pa ON pi.id = pa.prisioner_id   
+WHERE
+    pi.office_id = ? AND pi.karagar_date <= '${endDate}'
+GROUP BY 
+    pi.case_id, c.name_np, c.name_en
+HAVING 
+    KaidiTotal > 0 OR 
+    ThunuwaTotal > 0 OR 
+    TotalArrestedInDateRange > 0 OR 
+    TotalReleasedInDateRange > 0
+ORDER BY 
+    c.name_np;
+
     `;
 
 
