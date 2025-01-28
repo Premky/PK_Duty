@@ -4,7 +4,7 @@ import {
   FormControl, Container, Select, InputLabel,
   MenuItem
 } from '@mui/material';
-const CountTableBody = ({records}) => {
+const CountTableBody = ({records,totals}) => {
   return (
     <>
     <TableBody>

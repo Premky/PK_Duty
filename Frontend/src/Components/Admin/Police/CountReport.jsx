@@ -385,7 +385,7 @@ const CountPoliceReport = () => {
 
                         {/* Suspense to show a fallback while the body is loading */}
                         <Suspense fallback={<div>Loading...</div>}>
-                            {!isLoading && <LazyTableBody records={records} />}
+                            {!isLoading && <LazyTableBody records={records} totals={totals} />}
                         </Suspense>
                     </Table>
                 </TableContainer>
