@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import axios from 'axios'
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition, Suspense } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
@@ -21,22 +21,17 @@ import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
+// Lazy load the TableBodyComponent
+const LazyTableBody = React.lazy(() => import('./CountTableBody'));
 
 const CountPoliceReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
-    // const today = new Date();
-    // const sevenDaysAgo = new Date(today);
-    // sevenDaysAgo.setDate(today.getDate() - 7);
-    // console.log('Seven Days Ago:', sevenDaysAgo); // Check this value
-
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
-    // const datebefore7days = new NepaliDate(npToday)
-    // datebefore7days.setDate(npToday.getDate() - 7);
-    // const formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');
+
 
     let formatteddatebefore7days = formattedDateNp;
     try {
@@ -47,9 +42,7 @@ const CountPoliceReport = () => {
 
         // Calculate 7 days before
         const nepaliDateBefore7Days = calculateNepaliDate(currentNepaliDate.year, currentNepaliDate.month, currentNepaliDate.day, 7);
-        const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object
-        // datebefore7days.setDate(npToday.getDate() - 7);
-        // formatteddatebefore7days = datebefore7days.format('YYYY-MM-DD');        
+        const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object   
 
     } catch (error) {
         console.error("Error calculating date before 7 days:", error);
@@ -170,131 +163,6 @@ const CountPoliceReport = () => {
         setTotals(totals);
     };
 
-    const exportToExcel1 = () => {
-        // Headers for the Excel sheet
-        const headers = [
-            [`मिति ${start_Date} गतेबाट ${end_Date} सम्म कारागार कार्यालय संखुवासभामा रहेका कैदीबन्दीहरुको मुद्दागत जाहेरी`],
-            ['सि.नं.', 'मुद्दा',
-                'जम्मा', '', '', '',
-                'कैदी', '', '',
-                'थुनुवा', '', '',
-                'आएको संख्या', 'छुटेको संख्या', 'कैफियत'],
-            ['', '',
-                'कैदी', 'थुनुवा', 'आश्रीत', 'जम्मा',
-                'पुरुष', 'महिला', 'जम्मा',
-                'पुरुष', 'महिला', 'जम्मा',
-                '', '', '', '']
-        ];
-
-        headers.forEach((headerRow, index) => {
-            const row = worksheet.addRow(headerRow);
-            if (index === 0) {
-                row.font = { bold: true, size: 12 };
-            }
-            row.alignment = { vertical: 'middle', horizontal: 'center' };
-        });
-
-        // Data for the rows
-        const formattedData = records.map((record, index) => [
-            index + 1,
-            record.CaseNameNP,
-            record.KaidiTotal,
-            record.ThunuwaTotal,
-            parseInt(record.Nabalak) + parseInt(record.Nabalika),
-            parseInt(record.KaidiTotal) + parseInt(record.ThunuwaTotal),
-            record.KaidiMale,
-            record.KaidiFemale,
-            parseInt(record.KaidiMale) + parseInt(record.KaidiFemale),
-            record.ThunuwaMale,
-            record.ThunuwaFemale,
-            parseInt(record.ThunuwaMale) + parseInt(record.ThunuwaFemale),
-            record.TotalArrestedInDateRange,
-            record.TotalReleasedInDateRange,
-            record.Remarks
-        ]);
-
-        // Adding the totals row
-        const totalsRow = [
-            'जम्मा',
-            '',
-            totals.KaidiTotal,
-            totals.ThunuwaTotal,
-            totals.Nabalak + totals.Nabalika,
-            totals.KaidiTotal + totals.ThunuwaTotal + totals.Nabalak + totals.Nabalika,
-            totals.KaidiMale,
-            totals.KaidiFemale,
-            totals.KaidiMale + totals.KaidiFemale,
-            totals.ThunuwaMale,
-            totals.ThunuwaFemale,
-            totals.ThunuwaMale + totals.ThunuwaFemale,
-            totals.SumOfArrestedInDateRange,
-            totals.SumOfReleasedInDateRange
-        ];
-        formattedData.push(totalsRow);
-
-        const blankline = [
-            '', '', '', '', '', '', '', '', '', '', ''
-        ]
-        formattedData.push(blankline);
-        formattedData.push(blankline);
-        formattedData.push(blankline);
-
-        const otherdetails = [
-            '', `मितिः ${formattedDateNp} गते ।`, '', '', '', '', '', '', '', '', '',
-            `${policeCommander.length > 0 ? `${policeCommander[0].ranknp} ${policeCommander[0].name_np}` : "Loading..."}`
-        ]
-        formattedData.push(otherdetails);
-        const otherdetails2 = [
-            '', '', '', '', '', '', '', '', '', '', '', 'प्रहरी सहायक निरिक्षक'
-        ]
-        // formattedData.push(otherdetails2);
-
-        // Create a worksheet and a workbook
-        const worksheet = XLSX.utils.aoa_to_sheet([...headers, ...formattedData]);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Prisoner Records');
-
-        // Define border style
-        const borderStyle = {
-            top: { style: 'thin', color: { rgb: '000000' } },
-            bottom: { style: 'thin', color: { rgb: '000000' } },
-            left: { style: 'thin', color: { rgb: '000000' } },
-            right: { style: 'thin', color: { rgb: '000000' } }
-        };
-
-        // Apply borders to r1:c14
-        const range = XLSX.utils.decode_range(worksheet['!ref']); // Get the range of the sheet
-        for (let row = range.s.r; row <= range.e.r; row++) {
-            for (let col = range.s.c; col <= range.e.c; col++) {
-                const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-                if (!worksheet[cellAddress]) {
-                    worksheet[cellAddress] = { t: 's', v: '' }; // If the cell is empty, initialize it
-                }
-                worksheet[cellAddress].s = worksheet[cellAddress].s || {};
-                worksheet[cellAddress].s.border = borderStyle;
-            }
-        }
-
-
-        worksheet['!merges'] = [
-            { s: { r: 0, c: 0 }, e: { r: 0, c: 14 } }, // Merge cells for "Title"
-            { s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, // Merge cells for "सि.नं."
-            { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }, // Merge cells for "मुद्दा"
-            { s: { r: 1, c: 2 }, e: { r: 1, c: 5 } }, // Merge cells for "जम्मा"
-            { s: { r: 1, c: 6 }, e: { r: 1, c: 8 } }, // Merge cells for "कैदी"
-            { s: { r: 1, c: 9 }, e: { r: 1, c: 11 } }, // Merge cells for "थुनुवा"
-            { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } }, // Merge cells for "आएको संख्या"
-            { s: { r: 1, c: 13 }, e: { r: 2, c: 13 } }, // Merge cells for "गएको संख्या"
-            { s: { r: 1, c: 14 }, e: { r: 2, c: 14 } }, // Merge cells for "कैफियत"
-            // { s: { r: 1, c: 11 }, e: { r: 2, c: 11 } }, // Merge cells for "मिति"
-            // { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } }, // Merge cells for "गार्ड प्रमुखको नाम"
-        ];
-
-
-        // Trigger download as an Excel file
-        XLSX.writeFile(workbook, 'prisoner_records.xlsx');
-    };
-
 
     const exportToExcel = async () => {
         // Create a new workbook and worksheet
@@ -347,7 +215,7 @@ const CountPoliceReport = () => {
             ]);
         });
 
-        
+
         // Add totals row
         worksheet.addRow([
             '',
@@ -385,7 +253,7 @@ const CountPoliceReport = () => {
         worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '']);
         worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '']);
         const commanderRow = worksheet.addRow(['', `मितिः ${formattedDateNp} गते।`, '', '', '', '', '', '', '', '', '', `${policeCommander.length > 0 ? `${policeCommander[0].ranknp} ${policeCommander[0].name_np}` : "Loading..."}`]);
-        const commanderRank = worksheet.addRow(['', '', '', '', '', '', '', '', '', '','', 'का.सु. गार्ड प्रमुख']);
+        const commanderRank = worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '', 'का.सु. गार्ड प्रमुख']);
 
         // Merge cells for the police commander name
         const commanderRowIndex = commanderRow.number; // Get the row number
@@ -485,7 +353,7 @@ const CountPoliceReport = () => {
                         </button>
                     </div>
                 </form>
-                <button onClick={exportToExcel}>Export</button>
+                <button onClick={exportToExcel} className='btn btn-sm btn-success'>Download</button>
             </div>
             <div className="report_data">
                 <TableContainer component={Paper} sx={{ mt: 4 }}>
@@ -514,7 +382,6 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" className='bg-secondary fw-bold'>जम्मा</TableCell>
                             </TableRow>
                         </TableHead>
-
                         <TableBody>
                             {records.map((record, index) => (
                                 <TableRow key={index}>
@@ -551,6 +418,10 @@ const CountPoliceReport = () => {
                                 <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfReleasedInDateRange}</TableCell>
                             </TableRow>
                         </TableBody>
+                        {/* Suspense to show a fallback while the body is loading
+                        <Suspense fallback={<div>Loading...</div>}>
+                            {!isLoading && <LazyTableBody records={records} totals={totals} />}
+                        </Suspense> */}
                     </Table>
                 </TableContainer>
 
