@@ -434,7 +434,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
                                 <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
@@ -443,7 +443,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" >{totals.TotalMaleArrestedInDateRange}</TableCell>
                                 <TableCell align="center" >{totals.TotalFemaleArrestedInDateRange}</TableCell>
                                 <TableCell align="center" >{totals.SumOfArrestedInDateRange}</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
@@ -470,7 +470,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center">०</TableCell>
                                 <TableCell align="center">०</TableCell>
                                 <TableCell align="center">०</TableCell>
-                                <TableCell align="center">०</TableCell>
+                                <TableCell align="center"></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
@@ -481,7 +481,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" >
                                     {parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale) + parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale)}
                                 </TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
@@ -490,7 +490,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" >{totals.Nabalak}</TableCell>
                                 <TableCell align="center" >{totals.Nabalika}</TableCell>
                                 <TableCell align="center" >{parseInt(totals.Nabalak) + parseInt(totals.Nabalika)}</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
@@ -503,7 +503,7 @@ const CountPoliceReport = () => {
                                 <TableCell align="center" >
                                     {parseInt(totals.KaidiMale) + parseInt(totals.ThunuwaMale) + parseInt(totals.Nabalak) + parseInt(totals.KaidiFemale) + parseInt(totals.ThunuwaFemale) + parseInt(totals.Nabalika)}
                                 </TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" ></TableCell>
 
                             </TableRow>
                         </TableBody>

@@ -476,38 +476,40 @@ router.get('/get_released_counts', verifyToken, async (req, res) => {
     const formatted_prev_month = prev_month.padStart(2, '0');
     const formatted_curr_day = curr_day.padStart(2, '0');
 
-    const prev_month_date = `${curr_year}-${formatted_prev_month}-${formatted_curr_day}`;
+    const prev_month_date = `${curr_year}-${formatted_prev_month}-01`;
     const this_month = `${curr_year}-${formatted_curr_month}-01`
 
     // const prev_month_date = curr_year + '-' + prev_month + '-' + curr_day;
     // const this_month = curr_year + '-' + curr_month + '-' + 1;
     // console.log(prev_month_date);
 
-    // console.log(req.query)
+    console.log(prev_month_date, this_month)
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='M' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegMaleMonth,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='F' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegFemaleMonth,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiMonth,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleMonth,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiMonth,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkMonth,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Year,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Month,
-        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferYear,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMonth,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='M' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMaleMonth,
-        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='F' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferFemaleMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND pi.gender='M' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegMaleMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND pi.gender='F' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegFemaleMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Year,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Month,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferYear,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND pi.gender='M' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMaleMonth,
+        SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND pi.gender='F' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferFemaleMonth,
+        SUM(CASE WHEN release_id IS NULL AND pi.released_date<='${prev_month_date}' AND pi.gender='M' THEN 1 ELSE 0 END) AS TotalPrevMaleMonth,
+        SUM(CASE WHEN release_id IS NULL AND pi.released_date<='${prev_month_date}' AND pi.gender='F' THEN 1 ELSE 0 END) AS TotalPrevFemaleMonth,
         COUNT(*) AS Total
         FROM prisioners_info pi
         LEFT JOIN prisioners_release_details prd ON pi.release_id = prd.id
-        WHERE release_id IS NOT NULL AND released_date IS NOT NULL
+        WHERE pi.office_id=${userToken.main_office}
         `;
     
     try {
