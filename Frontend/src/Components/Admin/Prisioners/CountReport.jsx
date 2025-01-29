@@ -380,11 +380,11 @@ const CountPoliceReport = () => {
                     <Table size='small'>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" colSpan={8}>चालु आर्थिक वर्षमा छुटेका कैदीबन्दीको संख्याः</TableCell>
+                                <TableCell align="" colSpan={8}>चालु आर्थिक वर्षमा छुटेका कैदीबन्दीको संख्याः</TableCell>
                             </TableRow>
                             <TableRow className='bg-primary bg-gradient'>
                                 <TableCell align="center" colSpan={2}>अदालतको आदेश वा नियमित छुट संख्या</TableCell>
-                                <TableCell align="center" colSpan={2}>कामदारी सुविदा पाएका संख्या</TableCell>
+                                <TableCell align="center" colSpan={2}>कामदारी सुविधा पाएका संख्या</TableCell>
                                 <TableCell align="center" colSpan={2}>माफिमिनाहा पाएका छुट संख्या</TableCell>
                                 <TableCell align="center" colSpan={2}>मुलुकी फौजदारी कार्यविधी संहिता २०७४ को दफा १५५ अनुसार छुट संख्या</TableCell>
                             </TableRow>
@@ -449,28 +449,28 @@ const CountPoliceReport = () => {
                             <TableRow className=''>
                                 <TableCell align="center">३</TableCell>
                                 <TableCell align="" colSpan={0}>यस महिनाको छुटेका संख्या</TableCell>
-                                <TableCell align="center" >{totals.TotalMaleReleasedInDateRange}</TableCell>
-                                <TableCell align="center" >{totals.TotalFemaleReleasedInDateRange}</TableCell>
-                                <TableCell align="center" >{totals.SumOfReleasedInDateRange}</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center"> {releasedCounts.TotalRegMaleMonth}</TableCell>
+                                <TableCell align="center"> {releasedCounts.TotalRegFemaleMonth}</TableCell>
+                                <TableCell align="center"> {parseInt(releasedCounts.TotalRegMaleMonth)+parseInt(releasedCounts.TotalRegFemaleMonth)}</TableCell>
+                                <TableCell align="center"></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">४</TableCell>
                                 <TableCell align="" colSpan={0}>यस महिनामा सरुवा भएको संख्या</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" ></TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center">{releasedCounts.TotalTransferMaleMonth}</TableCell>
+                                <TableCell align="center">{releasedCounts.TotalTransferFemaleMonth}</TableCell>
+                                <TableCell align="center">{parseInt(releasedCounts.TotalTransferMaleMonth)+parseInt(releasedCounts.TotalTransferFemaleMonth)}</TableCell>
+                                <TableCell align="center"></TableCell>
 
                             </TableRow>
                             <TableRow className=''>
                                 <TableCell align="center">५</TableCell>
                                 <TableCell align="" colSpan={0}>यस महिनामा मृत्यु भएको संख्या</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center">०</TableCell>
+                                <TableCell align="center">०</TableCell>
+                                <TableCell align="center">०</TableCell>
+                                <TableCell align="center">०</TableCell>
 
                             </TableRow>
                             <TableRow className=''>

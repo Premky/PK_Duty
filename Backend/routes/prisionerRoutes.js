@@ -488,6 +488,8 @@ router.get('/get_released_counts', verifyToken, async (req, res) => {
     const sql = `SELECT 
         SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
         SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='M' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegMaleMonth,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='F' AND (prd.reason=1 OR prd.reason=2) THEN 1 ELSE 0 END) AS TotalRegFemaleMonth,
         SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiYear,
         SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiMonth,
         SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleYear,
@@ -500,6 +502,8 @@ router.get('/get_released_counts', verifyToken, async (req, res) => {
         SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Month,
         SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferYear,
         SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMonth,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='M' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMaleMonth,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND pi.gender='F' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferFemaleMonth,
         COUNT(*) AS Total
         FROM prisioners_info pi
         LEFT JOIN prisioners_release_details prd ON pi.release_id = prd.id
