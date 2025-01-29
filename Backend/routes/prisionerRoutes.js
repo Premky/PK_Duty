@@ -20,26 +20,26 @@ const __dirname = path.dirname(__filename);
 import NepaliDateConverter from 'nepali-date-converter';
 const current_date = new NepaliDate().format('YYYY-MM-DD');
 const fy = new NepaliDate().format('YYYY'); //Support for filter
-const fy_date = fy + '-4-1'
+const fy_date = fy + '-04-01'
 // console.log(current_date);
 
 function converttoad(bsdate) {
     try {
         const dobAD = NepaliDateConverter.parse(bsdate);
         const ad = dobAD.getAD();
-        console.log('DOB_AD', ad);
+        // console.log('DOB_AD', ad);
         // Accessing year, month, and day using methods
         const year = ad.year;
         const month = ad.month + 1;
-        const date = ad.date;   
-        const day = ad.day+1;     
+        const date = ad.date;
+        const day = ad.day + 1;
         const formattedDobAD = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
         // console.log('Formatted DOB_AD:', formattedDobAD);
         return formattedDobAD;
     }
     catch (err) {
-    console.error(err);
-}
+        console.error(err);
+    }
 }
 console.log(converttoad('2081-10-01'));
 
@@ -156,9 +156,9 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
     const { address, arrested, case_id, country, dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
         office_id, prisioner_type, punarabedan, release_date, total_duration } = req.body;
-        console.log("Check Data:", id);
+    console.log("Check Data:", id);
     const ad_dob = converttoad(dob);
-        
+
     //Input Validation
     if (parseInt(office_id, 10) !== parseInt(userToken.main_office, 10)) {
         return res.status(403).json({
@@ -468,25 +468,44 @@ router.get('/get_released_counts', verifyToken, async (req, res) => {
     const endDate = req.query.endDate;
     const curr_year = new NepaliDate().format('YYYY');
     const curr_month = new NepaliDate().format('MM');
-    const prev_month = new NepaliDate().format('MM') - 1;
+    const prev_month = (new NepaliDate().format('MM') - 1).toString().padStart(2, '0');
     const curr_day = new NepaliDate().format('DD');
 
-    const prev_month_date = curr_year + '-' + prev_month + '-' + curr_day;
-    const this_month = curr_year + '-' + curr_month + '-' + 1;
-    console.log(prev_month_date);
+    // Ensure curr_month and prev_month are always in 'MM' format
+    const formatted_curr_month = curr_month.padStart(2, '0');
+    const formatted_prev_month = prev_month.padStart(2, '0');
+    const formatted_curr_day = curr_day.padStart(2, '0');
 
-    console.log(req.query)
+    const prev_month_date = `${curr_year}-${formatted_prev_month}-${formatted_curr_day}`;
+    const this_month = `${curr_year}-${formatted_curr_month}-01`
+
+    // const prev_month_date = curr_year + '-' + prev_month + '-' + curr_day;
+    // const this_month = curr_year + '-' + curr_month + '-' + 1;
+    // console.log(prev_month_date);
+
+    // console.log(req.query)
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
-     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
-     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
-     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalWorkYear,
-     SUM(CASE WHEN release_id IS NOT NULL AND pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalWorkMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=2 THEN 1 ELSE 0 END) AS TotalDharautiMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=3 THEN 1 ELSE 0 END) AS TotalParoleMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=4 THEN 1 ELSE 0 END) AS TotalMafiMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=5 THEN 1 ELSE 0 END) AS TotalWorkMonth,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Year,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=6 THEN 1 ELSE 0 END) AS Total155Month,
+        SUM(CASE WHEN pi.released_date>='${fy_date}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferYear,
+        SUM(CASE WHEN pi.released_date>='${this_month}' AND prd.reason=7 THEN 1 ELSE 0 END) AS TotalTransferMonth,
         COUNT(*) AS Total
         FROM prisioners_info pi
         LEFT JOIN prisioners_release_details prd ON pi.release_id = prd.id
+        WHERE release_id IS NOT NULL AND released_date IS NOT NULL
         `;
-    console.log(sql);
+    
     try {
         // Execute the query
         const result = await query(sql);
