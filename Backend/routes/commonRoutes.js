@@ -387,7 +387,6 @@ HAVING
     TotalReleasedInDateRange > 0
 ORDER BY 
     c.name_np;
-
     `;
 
 

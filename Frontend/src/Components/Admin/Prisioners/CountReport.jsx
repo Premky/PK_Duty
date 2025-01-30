@@ -6,6 +6,10 @@ import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import "nepali-datepicker-reactjs/dist/index.css"
 import NepaliDate from 'nepali-datetime'
+const current_date = new NepaliDate().format('YYYY-MM-DD');
+const fy = new NepaliDate().format('YYYY'); //Support for filter
+const fm = new NepaliDate().format('MM'); //Support for filter
+const fy_date = fy + '-4-1'
 // import Select from 'react-select';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button,
@@ -110,7 +114,7 @@ const CountPoliceReport = () => {
             if (Status) {
                 if (Result?.length > 0) {
                     setReleasedCounts(Result[0]);
-                    console.log("Fetched data:", Result);
+                    console.log("Fetched data:", Result[0]);
                 } else {
                     console.log("No Record Found");
                 }
@@ -416,7 +420,7 @@ const CountPoliceReport = () => {
                     <Table size='small'>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="" colSpan={6}>____सालको _____ महिनाको मसान्तसम्मको बन्दी संख्याः____ जना</TableCell>
+                                <TableCell align="" colSpan={6}>{fy} सालको {fm} महिनाको मसान्तसम्मको बन्दी संख्याः</TableCell>
                             </TableRow>
                             <TableRow className='bg-primary bg-gradient'>
                                 <TableCell align="center" >सि.नं.</TableCell>
@@ -431,9 +435,9 @@ const CountPoliceReport = () => {
                             <TableRow className=''>
                                 <TableCell align="center">१</TableCell>
                                 <TableCell align="" colSpan={0}>अघिल्लाो महिनाको संख्या</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
-                                <TableCell align="center" >०</TableCell>
+                                <TableCell align="center" >{releasedCounts.TotalPrevMaleMonth}</TableCell>
+                                <TableCell align="center" >{releasedCounts.TotalPrevFemaleMonth}</TableCell>
+                                <TableCell align="center" >{parseInt(releasedCounts.TotalPrevMaleMonth)+parseInt(releasedCounts.TotalPrevFemaleMonth)}</TableCell>
                                 <TableCell align="center" ></TableCell>
 
                             </TableRow>
@@ -575,6 +579,7 @@ const CountPoliceReport = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+
 
 
             </div>
