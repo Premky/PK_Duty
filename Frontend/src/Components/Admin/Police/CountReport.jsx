@@ -169,6 +169,21 @@ const CountPoliceReport = () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Prisoner Records');
 
+        // Set page layout
+        worksheet.pageSetup = {
+            paperSize: 9, // A4 size (9), Letter (1)
+            orientation: 'landscape', // 'portrait' or 'landscape'
+            margins: {
+                left: 0.5, right: 0.5, top: 0.75, bottom: 0.75,
+                header: 0.3, footer: 0.3
+            },
+            fitToPage: true, // Scale to fit on one page
+            fitToWidth: 1, // Fit to 1 page wide
+            fitToHeight: 1, // Fit to 1 page tall
+            horizontalCentered: true, // Center content horizontally
+            verticalCentered: false, // Center content vertically
+        };
+
         // Headers for the Excel sheet
         const headers = [
             [`मिति ${start_Date} गतेबाट ${end_Date} सम्म कारागार कार्यालय संखुवासभामा रहेका कैदीबन्दीहरुको मुद्दागत जाहेरी`],
@@ -188,9 +203,10 @@ const CountPoliceReport = () => {
         headers.forEach((headerRow, index) => {
             const row = worksheet.addRow(headerRow);
             if (index === 0) {
-                row.font = { bold: true, size: 10 };
+                row.font = { bold: true, size: 12 };
+                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
             }
-            row.font = { bold: true, size: 10 };
+            row.font = { name: 'Kalimati', bold: true, size: 11 };
             row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
         });
 
@@ -217,7 +233,7 @@ const CountPoliceReport = () => {
 
 
         // Add totals row
-        worksheet.addRow([
+        const totalRow = worksheet.addRow([
             '',
             'जम्मा',
             totals.KaidiTotal,
@@ -237,7 +253,7 @@ const CountPoliceReport = () => {
 
 
         // Add borders to all cells
-        worksheet.eachRow((row) => {
+        worksheet.eachRow((row, rowNumber) => {
             row.eachCell((cell) => {
                 cell.border = {
                     top: { style: 'thin' },
@@ -246,8 +262,14 @@ const CountPoliceReport = () => {
                     right: { style: 'thin' }
                 };
             });
-            row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            // Skip the first three header rows to avoid overwriting their font
+            if (rowNumber > 3) {
+                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                row.font = { name: 'Kalimati' };
+            }
         });
+
+        totalRow.font = { bold: true, name: 'Kalimati' };
 
         // Add additional rows
         worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '']);
@@ -274,9 +296,12 @@ const CountPoliceReport = () => {
         worksheet.mergeCells('O2:O3'); // कैफियत
 
         // Adjust column widths
-        worksheet.columns.forEach((column) => {
-            column.width = 15;
+        worksheet.columns.forEach((column, index) => {
+            // column.width = index === 1 ? 30 : 10;  For specific column width 
+            column.width = 10; //For all column width
         });
+        worksheet.getColumn(2).width = 30; // For specific column width
+        worksheet.getColumn(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
 
         // Save the file
         const buffer = await workbook.xlsx.writeBuffer();

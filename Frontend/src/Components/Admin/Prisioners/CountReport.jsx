@@ -23,7 +23,8 @@ import Box from '@mui/material/Box';
 
 import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
-import * as XLSX from 'xlsx';
+// import { exportToExcel } from "./../Prisioners/MaskebariExport"; // Import function
+import { exportToExcel } from './ExportToExcel'
 import ExcelJS from 'exceljs';
 
 const CountPoliceReport = () => {
@@ -187,7 +188,7 @@ const CountPoliceReport = () => {
         setTotals(totals);
     };
 
-    const exportToExcel = async () => {
+    const exportToExcel0 = async () => {
         // Create a new workbook and worksheet
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Prisoner Records');
@@ -310,6 +311,10 @@ const CountPoliceReport = () => {
         link.click();
     };
 
+    const exportMaskebari = async () => {
+        await exportToExcel(records, totals, fy, fm);
+    };
+    
 
     useEffect(() => {
         fetchRecords();
@@ -377,7 +382,8 @@ const CountPoliceReport = () => {
                         </button>
                     </div>
                 </form>
-                <button onClick={exportToExcel}>Export</button>
+                
+                <button onClick={exportMaskebari}>Download मास्केबारी</button>
             </div>
             <div className="report_data">
                 <TableContainer component={Paper} sx={{ mt: 4 }}>
