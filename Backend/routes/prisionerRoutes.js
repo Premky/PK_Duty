@@ -558,8 +558,14 @@ router.get('/get_nepali_prisioners_report', verifyToken, async (req, res) => {
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
 
     -- Nabalak and Nabalika
-    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'M' THEN 1 ELSE 0 END) AS Nabalak,
-    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Nabalika,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS KaidiNabalak,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS ThunuwaNabalak,
+    SUM(CASE WHEN release_id IS NULL AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS TotalNabalak,
+    
+    -- SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Nabalika,
+    -- Maashrit and Faashrit
+    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'M' THEN 1 ELSE 0 END) AS Maashrit,
+    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Faashrit,
 
     -- Total within date range
     SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
@@ -617,6 +623,7 @@ router.get('/get_foreign_prisioners_report', verifyToken, async (req, res) => {
     const sql = `SELECT 
     c.name_np AS CaseNameNP,
     c.name_en AS CaseNameEN,
+    npc.name_np AS CountryName,
     COUNT(*) AS Total,
 
     -- Kaidi Total, Male, Female, and Age Above 65
@@ -632,8 +639,14 @@ router.get('/get_foreign_prisioners_report', verifyToken, async (req, res) => {
     SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) > 65 THEN 1 ELSE 0 END) AS ThunuwaAgeAbove65,
 
     -- Nabalak and Nabalika
-    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'M' THEN 1 ELSE 0 END) AS Nabalak,
-    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Nabalika,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'कैदी' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS KaidiNabalak,
+    SUM(CASE WHEN release_id IS NULL AND prisioner_type = 'थुनुवा' AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS ThunuwaNabalak,
+    SUM(CASE WHEN release_id IS NULL AND TIMESTAMPDIFF(YEAR, pi.dob_ad, CURDATE()) < 18 THEN 1 ELSE 0 END) AS TotalNabalak,
+    
+    -- SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Nabalika,
+    -- Maashrit and Faashrit
+    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'M' THEN 1 ELSE 0 END) AS Maashrit,
+    SUM(CASE WHEN release_id IS NULL AND pa.gender = 'F' THEN 1 ELSE 0 END) AS Faashrit,
 
     -- Total within date range
     SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
@@ -651,7 +664,7 @@ LEFT JOIN np_country npc ON pi.country = npc.id
 WHERE
     pi.office_id = ? AND pi.karagar_date <= '${endDate}' AND (npc.name_np!='नेपाल' OR pi.country!=154)
 GROUP BY 
-    pi.case_id, c.name_np, c.name_en
+    pi.case_id, c.name_np, c.name_en, npc.name_np
 HAVING 
     KaidiTotal > 0 OR 
     ThunuwaTotal > 0 OR 
