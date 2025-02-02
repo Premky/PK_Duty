@@ -650,8 +650,8 @@ router.get('/get_foreign_prisioners_report', verifyToken, async (req, res) => {
 
     -- Total within date range
     SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalArrestedInDateRange,
-    SUM(CASE WHEN release_id IS NULL AND pi.karagar_date BETWEEN ? AND ? AND pi.gender = 'M' THEN 1 ELSE 0 END) AS TotalMaleArrestedInDateRange,
-    SUM(CASE WHEN release_id IS NULL AND pi.karagar_date BETWEEN ? AND ? AND pi.gender = 'F' THEN 1 ELSE 0 END) AS TotalFemaleArrestedInDateRange,
+    SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? AND pi.gender='M' THEN 1 ELSE 0 END) AS TotalMaleArrestedInDateRange,
+    SUM(CASE WHEN pi.karagar_date BETWEEN ? AND ? AND pi.gender = 'F' THEN 1 ELSE 0 END) AS TotalFemaleArrestedInDateRange,
 
     SUM(CASE WHEN pi.released_date BETWEEN ? AND ? THEN 1 ELSE 0 END) AS TotalReleasedInDateRange,
     SUM(CASE WHEN pi.released_date BETWEEN ? AND ? AND pi.gender = 'M' THEN 1 ELSE 0 END) AS TotalMaleReleasedInDateRange,

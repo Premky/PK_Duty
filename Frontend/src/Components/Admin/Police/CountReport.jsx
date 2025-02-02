@@ -6,7 +6,11 @@ import { useForm, Controller } from 'react-hook-form'
 import { NepaliDatePicker } from "nepali-datepicker-reactjs"
 import "nepali-datepicker-reactjs/dist/index.css"
 import NepaliDate from 'nepali-datetime'
-// import Select from 'react-select';
+const current_date = new NepaliDate().format('YYYY-MM-DD');
+const fy = new NepaliDate().format('YYYY'); //Support for filter
+const fm = new NepaliDate().format('MM'); //Support for filter
+const fy_date = fy + '-4-1'
+
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button,
     FormControl, Container, Select, InputLabel,
@@ -21,8 +25,9 @@ import Logout from '../../Login/Logout'
 import { useActionState } from 'react'
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
+import { exportToExcel } from './ExportPoliceWeekly'
 // Lazy load the TableBodyComponent
-const LazyTableBody = React.lazy(() => import('./CountTableBody'));
+const LazyCountTableBody = React.lazy(() => import('./CountTableBody'));
 
 const CountPoliceReport = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -163,156 +168,9 @@ const CountPoliceReport = () => {
         setTotals(totals);
     };
 
-
-    const exportToExcel = async () => {
-        // Create a new workbook and worksheet
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Prisoner Records');
-
-        // Set page layout
-        worksheet.pageSetup = {
-            paperSize: 9, // A4 size (9), Letter (1)
-            orientation: 'landscape', // 'portrait' or 'landscape'
-            margins: {
-                left: 0.5, right: 0.5, top: 0.75, bottom: 0.75,
-                header: 0.3, footer: 0.3
-            },
-            fitToPage: true, // Scale to fit on one page
-            fitToWidth: 1, // Fit to 1 page wide
-            fitToHeight: 1, // Fit to 1 page tall
-            horizontalCentered: true, // Center content horizontally
-            verticalCentered: false, // Center content vertically
-        };
-
-        // Headers for the Excel sheet
-        const headers = [
-            [`मिति ${start_Date} गतेबाट ${end_Date} सम्म कारागार कार्यालय संखुवासभामा रहेका कैदीबन्दीहरुको मुद्दागत जाहेरी`],
-            ['सि.नं.', 'मुद्दा',
-                'जम्मा', '', '', '',
-                'कैदी', '', '',
-                'थुनुवा', '', '',
-                'आएको संख्या', 'छुटेको संख्या', 'कैफियत'],
-            ['', '',
-                'कैदी', 'थुनुवा', 'आश्रीत', 'जम्मा',
-                'पुरुष', 'महिला', 'जम्मा',
-                'पुरुष', 'महिला', 'जम्मा',
-                '', '', '']
-        ];
-
-        // Add headers to the worksheet
-        headers.forEach((headerRow, index) => {
-            const row = worksheet.addRow(headerRow);
-            if (index === 0) {
-                row.font = { bold: true, size: 12 };
-                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-            }
-            row.font = { name: 'Kalimati', bold: true, size: 11 };
-            row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-        });
-
-        // Add data rows
-        records.forEach((record, index) => {
-            worksheet.addRow([
-                index + 1,
-                record.CaseNameNP,
-                record.KaidiTotal,
-                record.ThunuwaTotal,
-                parseInt(record.Nabalak) + parseInt(record.Nabalika),
-                parseInt(record.KaidiTotal) + parseInt(record.ThunuwaTotal),
-                record.KaidiMale,
-                record.KaidiFemale,
-                parseInt(record.KaidiMale) + parseInt(record.KaidiFemale),
-                record.ThunuwaMale,
-                record.ThunuwaFemale,
-                parseInt(record.ThunuwaMale) + parseInt(record.ThunuwaFemale),
-                record.TotalArrestedInDateRange,
-                record.TotalReleasedInDateRange,
-                record.Remarks
-            ]);
-        });
-
-
-        // Add totals row
-        const totalRow = worksheet.addRow([
-            '',
-            'जम्मा',
-            totals.KaidiTotal,
-            totals.ThunuwaTotal,
-            totals.Nabalak + totals.Nabalika,
-            totals.KaidiTotal + totals.ThunuwaTotal + totals.Nabalak + totals.Nabalika,
-            totals.KaidiMale,
-            totals.KaidiFemale,
-            totals.KaidiMale + totals.KaidiFemale,
-            totals.ThunuwaMale,
-            totals.ThunuwaFemale,
-            totals.ThunuwaMale + totals.ThunuwaFemale,
-            totals.SumOfArrestedInDateRange,
-            totals.SumOfReleasedInDateRange,
-            ''
-        ]);
-
-
-        // Add borders to all cells
-        worksheet.eachRow((row, rowNumber) => {
-            row.eachCell((cell) => {
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
-                };
-            });
-            // Skip the first three header rows to avoid overwriting their font
-            if (rowNumber > 3) {
-                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-                row.font = { name: 'Kalimati' };
-            }
-        });
-
-        totalRow.font = { bold: true, name: 'Kalimati' };
-
-        // Add additional rows
-        worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '']);
-        worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '']);
-        const commanderRow = worksheet.addRow(['', `मितिः ${formattedDateNp} गते।`, '', '', '', '', '', '', '', '', '', `${policeCommander.length > 0 ? `${policeCommander[0].ranknp} ${policeCommander[0].name_np}` : "Loading..."}`]);
-        const commanderRank = worksheet.addRow(['', '', '', '', '', '', '', '', '', '', '', 'का.सु. गार्ड प्रमुख']);
-
-        // Merge cells for the police commander name
-        const commanderRowIndex = commanderRow.number; // Get the row number
-        worksheet.mergeCells(`L${commanderRowIndex}:N${commanderRowIndex}`);
-        const commanderRankIndex = commanderRank.number; // Get the row number
-        worksheet.mergeCells(`L${commanderRankIndex}:N${commanderRankIndex}`);
-
-
-        // Merge cells
-        worksheet.mergeCells('A1:O1'); // Title
-        worksheet.mergeCells('A2:A3'); // सि.नं.
-        worksheet.mergeCells('B2:B3'); // मुद्दा
-        worksheet.mergeCells('C2:F2'); // जम्मा
-        worksheet.mergeCells('G2:I2'); // कैदी
-        worksheet.mergeCells('J2:L2'); // थुनुवा
-        worksheet.mergeCells('M2:M3'); // आएको संख्या
-        worksheet.mergeCells('N2:N3'); // छुटेको संख्या
-        worksheet.mergeCells('O2:O3'); // कैफियत
-
-        // Adjust column widths
-        worksheet.columns.forEach((column, index) => {
-            // column.width = index === 1 ? 30 : 10;  For specific column width 
-            column.width = 10; //For all column width
-        });
-        worksheet.getColumn(2).width = 30; // For specific column width
-        worksheet.getColumn(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-
-        // Save the file
-        const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'prisoner_records.xlsx';
-        link.click();
+    const ExportPoliceWeekly = async () => {
+        await exportToExcel(start_Date, end_Date, records, totals, fy, fm, formattedDateNp, policeCommander);
     };
-
-
     useEffect(() => {
         fetchRecords();
         fetchPoliceCommander();
@@ -378,79 +236,13 @@ const CountPoliceReport = () => {
                         </button>
                     </div>
                 </form>
-                <button onClick={exportToExcel} className='btn btn-sm btn-success'>Download</button>
+                <button onClick={ExportPoliceWeekly} className='btn btn-sm btn-success'>Download</button>
             </div>
             <div className="report_data">
-                <TableContainer component={Paper} sx={{ mt: 4 }}>
-                    <Table size='small'>
-                        <TableHead>
-                            <TableRow className='bg-primary'>
-                                <TableCell align="center" rowSpan={2}>सि.नं.</TableCell>
-                                <TableCell align="center" rowSpan={2}>मुद्दा</TableCell>
-                                <TableCell align="center" colSpan={4}>जम्मा</TableCell>
-                                <TableCell align="center" colSpan={3}>कैदी</TableCell>
-                                <TableCell align="center" colSpan={3}>थुनुवा</TableCell>
-                                <TableCell align="center" rowSpan={2}>आएको संख्या</TableCell>
-                                <TableCell align="center" rowSpan={2}>छुटेको संख्या</TableCell>
-                                <TableCell align="center" rowSpan={2}>कैफियत</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell align="center" className='bg-secondary'>कैदी</TableCell>
-                                <TableCell align="center" className='bg-secondary'>थुनुवा</TableCell>
-                                <TableCell align="center" className='bg-secondary'>आश्रित</TableCell>
-                                <TableCell align="center" className='bg-secondary fw-bold'>जम्मा</TableCell>
-                                <TableCell align="center" className='bg-secondary bg-gradient'>पुरुष</TableCell>
-                                <TableCell align="center" className='bg-secondary bg-gradient'>महिला</TableCell>
-                                <TableCell align="center" className='bg-secondary bg-gradient fw-bold'>जम्मा</TableCell>
-                                <TableCell align="center" className='bg-secondary'>पुरुष</TableCell>
-                                <TableCell align="center" className='bg-secondary'>महिला</TableCell>
-                                <TableCell align="center" className='bg-secondary fw-bold'>जम्मा</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {records.map((record, index) => (
-                                <TableRow key={index}>
-                                    <TableCell align='center'>{index + 1}</TableCell>
-                                    <TableCell>{record.CaseNameNP}</TableCell>
-                                    <TableCell align='center'>{record.KaidiTotal}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaTotal}</TableCell>
-                                    <TableCell align='center'>{parseInt(record.Nabalak) + parseInt(record.Nabalika)}</TableCell>
-                                    <TableCell align='center' className='fw-bold'>{parseInt(record.ThunuwaTotal) + parseInt(record.KaidiTotal)}</TableCell>
-                                    <TableCell align='center'>{record.KaidiMale}</TableCell>
-                                    <TableCell align='center'>{record.KaidiFemale}</TableCell>
-                                    <TableCell align='center' className='fw-bold'>{parseInt(record.KaidiMale) + parseInt(record.KaidiFemale)}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaMale}</TableCell>
-                                    <TableCell align='center'>{record.ThunuwaFemale}</TableCell>
-                                    <TableCell align='center' className='fw-bold'>{parseInt(record.ThunuwaMale) + parseInt(record.ThunuwaFemale)}</TableCell>
-
-                                    <TableCell align='center'>{record.TotalArrestedInDateRange}</TableCell>
-                                    <TableCell align='center'>{record.TotalReleasedInDateRange}</TableCell>
-                                </TableRow>
-                            ))}
-                            <TableRow key='total' >
-                                <TableCell className='bg-primary fw-bold' colSpan={2}>जम्मा</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.KaidiTotal}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaTotal}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.Nabalak) + parseInt(totals.Nabalika)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.KaidiTotal) + parseInt(totals.ThunuwaTotal) + parseInt(totals.Nabalak) + parseInt(totals.Nabalika)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.KaidiMale}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.KaidiFemale}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.KaidiMale) + parseInt(totals.KaidiFemale)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaMale}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.ThunuwaFemale}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{parseInt(totals.ThunuwaMale) + parseInt(totals.ThunuwaFemale)}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfArrestedInDateRange}</TableCell>
-                                <TableCell align='center' className='bg-success fw-bold'>{totals.SumOfReleasedInDateRange}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                        {/* Suspense to show a fallback while the body is loading
+                         {/* Suspense to show a fallback while the body is loading */}
                         <Suspense fallback={<div>Loading...</div>}>
-                            {!isLoading && <LazyTableBody records={records} totals={totals} />}
-                        </Suspense> */}
-                    </Table>
-                </TableContainer>
-
-
+                            {!isLoading && <LazyCountTableBody records={records} totals={totals} />}
+                        </Suspense>
             </div>
         </>
     )
