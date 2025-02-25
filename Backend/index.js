@@ -32,7 +32,7 @@ app.use(cors({
     origin: (origin, callback) => {        
         const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
             'http://localhost:5173',
-            'http://localhost:5174',
+            'http://localhost:5175',
             'http://192.168.1.21:5173',
         ];
         if (!origin || allowedOrigins.includes(origin)) {

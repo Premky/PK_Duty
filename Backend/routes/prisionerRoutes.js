@@ -131,12 +131,11 @@ router.get('/get_prisioners/:id', async (req, res) => {
 //Get Police Records
 router.get('/get_prisioners', async (req, res) => {
     // console.log('Rank working');
-    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en 
+    const sql = `SELECT pi.*, c.name_np AS case_np, c.name_en AS case_en, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), pi.dob_ad)), '%Y')+0 AS age
                 FROM prisioners_info pi
                 LEFT JOIN cases c ON pi.case_id = c.id
                 WHERE pi.office_id=1 AND pi.release_id IS NULL
                 ORDER BY pi.name_np ASC`;
-
     try {
         const result = await query(sql);
         return res.json({ Status: true, Result: result })
