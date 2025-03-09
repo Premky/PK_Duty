@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Header from '../../Header&Footer/Header';
-import Navbar from './Navbar';
+// import Navbar from './Navbar';
 import Footer from '../../Header&Footer/Footer';
 
 const PoliceIndexRoute = () => {
@@ -12,7 +12,7 @@ const PoliceIndexRoute = () => {
     return (
         <>
             <Header />  
-            <Navbar/>          
+            {/* <Navbar/>           */}
             {isValidUser ? <Outlet /> : <Navigate to="/" />}
             <Footer />
         </>

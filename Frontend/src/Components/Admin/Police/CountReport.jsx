@@ -37,17 +37,19 @@ const CountPoliceReport = () => {
     const npToday = new NepaliDate();
     const formattedDateNp = npToday.format('YYYY-MM-DD');
 
-
     let formatteddatebefore7days = formattedDateNp;
+    const [dateData, setDateData] = useState(null);
+    const [start_Date, setStart_Date] = useState(formatteddatebefore7days);
+    const [end_Date, setEnd_Date] = useState(formattedDateNp);
     try {
         const datebefore7days = new NepaliDate(npToday);
-        // console.log(datebefore7days)
-        const currentNepaliDate = { year: dateData.year, month: dateData.month, day: dateData.day };
-        const currentEnglishDate = { year: dateData.yearEn, month: dateData.monthEn + 1, day: dateData.dayEn }; // Adjust monthEn to 1-based
+        console.log(datebefore7days)
+        // const currentNepaliDate = { year: dateData.year, month: dateData.month, day: dateData.day };
+        // const currentEnglishDate = { year: dateData.yearEn, month: dateData.monthEn + 1, day: dateData.dayEn }; // Adjust monthEn to 1-based
 
         // Calculate 7 days before
-        const nepaliDateBefore7Days = calculateNepaliDate(currentNepaliDate.year, currentNepaliDate.month, currentNepaliDate.day, 7);
-        const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object   
+        // const nepaliDateBefore7Days = calculateNepaliDate(currentNepaliDate.year, currentNepaliDate.month, currentNepaliDate.day, 7);
+        // const englishDateBefore7Days = calculateEnglishDate(currentEnglishDate.year, currentEnglishDate.month - 1, currentEnglishDate.day, 7); // Convert month to 0-based for Date object   
 
     } catch (error) {
         console.error("Error calculating date before 7 days:", error);
@@ -76,8 +78,6 @@ const CountPoliceReport = () => {
         Total: 0,
     });
 
-    const [start_Date, setStart_Date] = useState(formatteddatebefore7days);
-    const [end_Date, setEnd_Date] = useState(formattedDateNp);
 
     const fetchRecords = async (data) => {
         // if (!data) { data = nul`l }
@@ -89,7 +89,7 @@ const CountPoliceReport = () => {
                 startDate: data?.startDate || formatteddatebefore7days,
                 endDate: data?.endDate || formattedDateNp,
             }).toString();
-
+            // alert(queryParams)
             const fullUrl = `${url}?${queryParams}`;
 
             const response = await axios.get(fullUrl, {
@@ -172,6 +172,16 @@ const CountPoliceReport = () => {
         await exportToExcel(start_Date, end_Date, records, totals, fy, fm, formattedDateNp, policeCommander);
     };
     useEffect(() => {
+        fetchDateData(); // Your function to get data
+    }, []);
+
+    function fetchDateData() {
+        setTimeout(() => {
+            setDateData(new Date()); // Example
+        }, 1000);
+    }
+
+    useEffect(() => {
         fetchRecords();
         fetchPoliceCommander();
     }, [])
@@ -180,7 +190,7 @@ const CountPoliceReport = () => {
         <>
             {/* <Link to='/police'>Police Form</Link> */}
             <div className="report_title text-center bg-info bg-gradient p-2">
-                संख्यात्मक विवरण
+                संख्यात्मक विवरण {formatteddatebefore7days} देखि {formattedDateNp}
             </div>
             <div className="div pt-1">
                 <form className="row">
@@ -239,10 +249,13 @@ const CountPoliceReport = () => {
                 <button onClick={ExportPoliceWeekly} className='btn btn-sm btn-success'>Download</button>
             </div>
             <div className="report_data">
-                         {/* Suspense to show a fallback while the body is loading */}
-                        <Suspense fallback={<div>Loading...</div>}>
-                            {!isLoading && <LazyCountTableBody records={records} totals={totals} />}
-                        </Suspense>
+                {/* Suspense to show a fallback while the body is loading */}
+                <Suspense fallback={<div>Loading...</div>}>
+                    {!isLoading && <LazyCountTableBody records={records} totals={totals}
+                        // startDate={queryParams.startDate}
+                        // endDate={queryParams.endDate}
+                    />}
+                </Suspense>
             </div>
         </>
     )

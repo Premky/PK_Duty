@@ -36,6 +36,9 @@ const DutyMaker = React.lazy(() => import('./Components/Admin/Police/DutyMaker')
 const PrisionersRecordTable = React.lazy(() => import('./Components/Admin/Prisioners/PrisionersRecordTable'));
 const CommonPrisionersTable = React.lazy(() => import('./Components/Admin/Prisioners/CommonPrisionersTable'));
 const PrisionerReleaseForm = React.lazy(() => import('./Components/Admin/Prisioners/PrisionerReleaseForm'));
+import TopNavbar from './Components/Header&Footer/TopNavbar';
+import Combined from './Components/Header&Footer/Combined';
+import CaseDetails from './Components/Admin/OtherRequired/CaseDetails';
 
 const Nepalidate = new NepaliDate();
 const currentDate = Nepalidate.format('YYYY-MM-DD')
@@ -49,40 +52,44 @@ function App() {
 
   return (
     <>
-    <Suspense fallback={<div>Loading...</div>}>
-      {/* Date:{currentDate}, Time:{currentTime} */}
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/logout' element={<LogoutButton />} />
-          <Route path='/cases' element={<CaseForm />} />
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* Date:{currentDate}, Time:{currentTime} */}
+        <BrowserRouter>
+          <Routes>
+            {/* <Route path='/' element={<Login />} /> */}
+            <Route path='/login' element={<Login />} />
+            <Route path='/logout' element={<LogoutButton />} />
+            <Route path='/cases' element={<CaseForm />} />
+            <Route path='/' element={<Combined />} >
+              <Route path='/police' >
+                <Route index element={<CountPoliceReport />} />
+                <Route path='addpolice' element={<PoliceForm />} />
+                <Route path='addprisioner' element={<PrisionersForm />} />
+                {/* <Route path='report' element={<CountPoliceReport />} /> */}
+                <Route path='prisioners' element={<CommonPrisionersTable />} />
+                <Route path='releaseform' element={<PrisionerReleaseForm />} />
+                <Route path='aashrit' element={<AashritForm />} />
 
+                <Route path='details/:caseName' element={<CommonPrisionersTable />} />
+                <Route path='details/:caseName/:type' element={<CommonPrisionersTable />} />
+                {/* <Route path='details/:type' element={<CommonPrisionersTable />} /> */}
+              </Route>
+            </Route>
 
-          <Route path='/police' element={<PoliceIndexRoute />}>
-            <Route index element={<CountPoliceReport />} />
-            <Route path='addpolice' element={<PoliceForm/>}/>
-            <Route path='addprisioner' element={<PrisionersForm/>}/>
-            {/* <Route path='report' element={<CountPoliceReport />} /> */}
-            <Route path='prisioners' element={<CommonPrisionersTable />} />
-            <Route path='releaseform' element={<PrisionerReleaseForm />} />
-            <Route path='aashrit' element={<AashritForm />} />
-          </Route>
-
-          <Route path='/prisioner' element={<PrisionersIndexRoute />}>
-            <Route index element={<PrisionersForm />} />
-            <Route path='report' element={<CountPrisionerReport />} />
-            <Route path='prisioners' element={<CommonPrisionersTable />} />
-            <Route path='releaseform' element={<PrisionerReleaseForm />} />
-          </Route>
-          {/* Temproary Routes */}
-          <Route path='/prisioners' element={<CommonPrisionersTable />} />
-          <Route path='/dutymaker' element={<DutyMaker />} />
-          <Route path='/aashrit' element={<AashritForm />} />
-          <Route path='/count' element={<CountPrisionerReport/>} />
-        </Routes>
-      </BrowserRouter>
-    </Suspense>
+            <Route path='/prisioner' element={<PrisionersIndexRoute />}>
+              <Route index element={<PrisionersForm />} />
+              <Route path='report' element={<CountPrisionerReport />} />
+              <Route path='prisioners' element={<CommonPrisionersTable />} />
+              <Route path='releaseform' element={<PrisionerReleaseForm />} />
+            </Route>
+            {/* Temproary Routes */}
+            <Route path='/prisioners' element={<CommonPrisionersTable />} />
+            <Route path='/dutymaker' element={<DutyMaker />} />
+            <Route path='/aashrit' element={<AashritForm />} />
+            <Route path='/count' element={<CountPrisionerReport />} />
+          </Routes>
+        </BrowserRouter>
+      </Suspense>
     </>
   )
 }

@@ -295,7 +295,7 @@ const PrisionersForm = () => {
         <React.Fragment>
             <div className="col-12">
                 <div className="d-flex flex-column px-3 pt-0">
-                    <button> <Link to='/prisioner/report'>Report</Link></button>
+                    {/* <button> <Link to='/prisioner/report'>Report</Link></button> */}
                     <form className="row mt-1 g-3">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={4} >

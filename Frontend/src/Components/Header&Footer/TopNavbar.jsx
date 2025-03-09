@@ -13,12 +13,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from 'react-router-dom';  // Import Link from react-router-dom
-import Logout from '../../Login/Logout';
+
+import Logout from '../Login/Logout';
 // Pages and their corresponding routes
 const pagesLabel = ['कैदीबन्दीको संख्या', 'कैदीबन्दीको नामावली' ,'प्रहरी कर्मचारीको विवरण', 'कैदीबन्दीको विवरण थप्नुहोस', 'आश्रितको विवरण थप्नुहोस्', 'कैदमुक्त'];
 const pages = ['police', 'police/prisioners', 'police/addpolice' , 'police/addprisioner','police/aashrit','police/releaseform']; // corresponding paths
 
-function Navbar() {
+function TopNavbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -75,4 +76,4 @@ function Navbar() {
     );
 }
 
-export default Navbar;
+export default TopNavbar;

@@ -130,4 +130,19 @@ router.post('/check', verifyToken, (req, res) => {
     console.log("working", ram)
 })
 
+router.get('/session', (req, res) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'No active session' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        res.status(200).json({ success: true, role: decoded.role, 
+                                token, user: decoded.username, office_id:decoded.office });
+    } catch (error) {
+        res.status(401).json({ success: false, message: 'Invalid session' });
+    }
+});
 export { router as adminRouter }
