@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SimpleMap from '../Client/Map';
 
 const Footer = () => {
     return (
@@ -27,10 +28,7 @@ const Footer = () => {
                     <h4>कार्यालय स्थान</h4>
                     <div className="row">
                         <div className="col">
-                            Map here
-                            {/* Uncomment when ready */}
-                            {/* <SimpleMap /> */}
-
+                            <SimpleMap />
                         </div>
                     </div>
                     <div className="row">

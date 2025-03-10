@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 // import Icon from '../../Icon';
 // import CustomModal from '../../Utils/CustomModal';
 import { Link } from 'react-router-dom';
+import CustomModal from '../../Utils/CustomModal';
 
 const Notice_News = () => {
 
@@ -48,7 +49,7 @@ const Notice_News = () => {
               <td>
                 <CustomModal
                   title={notice.subject}
-                  buttonText={<span><Icon iconName="Eye" style={{ color: 'black', fontSize: '1em' }} /></span>}
+                  // buttonText={<span><Icon iconName="Eye" style={{ color: 'black', fontSize: '1em' }} /></span>}
                   fileType={notice.file.endsWith('.pdf') ? 'pdf' : 'image'}
                 >
                   {`${BASE_URL}/${notice.file}`}

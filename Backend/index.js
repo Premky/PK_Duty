@@ -12,6 +12,7 @@ import { adminRouter } from './routes/authRoutes.js';
 import { policeRouter } from './routes/policeRoutes.js';
 import { prisionerRouter } from './routes/prisionerRoutes.js';
 import { commonRouter } from './routes/commonRoutes.js';
+import { dispalyRouter } from './routes/displayRoutes.js';
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use('/auth', adminRouter)
 app.use('/common', commonRouter)
 app.use('/police', policeRouter)
 app.use('/prisioner', prisionerRouter)
+app.use('/display', dispalyRouter)
 
 // Global error handler
 app.use(errorHandler);

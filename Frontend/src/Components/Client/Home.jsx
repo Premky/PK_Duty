@@ -5,6 +5,12 @@ import femalelogo from '../../assets/Logos/female-icon.png';
 import nogenderlogo from '../../assets/Logos/other-icon.png';
 import axios from 'axios';
 import Notice_Bolpatra from './Notice_Bolpatra';
+import { Box, Grid2 } from '@mui/material';
+import AboutOfficeCard from './Utils/AboutOfficeCard';
+import ActionAreaCard from '../ReusableComponents/ActionAreaCard';
+import { Link } from 'react-router-dom';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import ForumIcon from '@mui/icons-material/Forum';
 
 const Home = () => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,7 +22,7 @@ const Home = () => {
     const [office, setOffice] = useState([]);
     const [loading, setLoading] = useState(true); // Added loading state
     const [error, setError] = useState(null); // Added error state
-    const [fetchNotice, setFetchNotice]=useState([]);
+    const [fetchNotice, setFetchNotice] = useState([]);
 
     const fetchEmployees = async () => {
         try {
@@ -71,84 +77,127 @@ const Home = () => {
     }, [BASE_URL]);
 
     return (
-        <div className='container-fluid'>
-            <div className="row">
-                <div className="col-md-9 col-sm-12">
-                    <div className="row b">
-                        <div className="col mb-1 mt-0 p-2 bg-danger text-white">
+        <>
+            <Box sx={{ flexGrow: 1 }}>
+                <Grid2 container spacing={1}>
+                    <Grid2 size={{ xs: 12, sm: 6, md: 9 }}>
+                        <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
                             <marquee behavior="" direction="" scrollamount="1">
                                 सुचना-2 लाई सुचना 5git बनाइएको छ ।
                             </marquee>
-                        </div>
-                        <div className="col-12">
-                            <img src={office_image} alt="Office Building" className="responsive-image" />
-                        </div>
-                    </div>
-                </div>
+                        </Box>
 
-                <div className="col-md-3 col-sm-12 m-0">
-                    {loading ? (
-                        <p>Loading employees...</p>
-                    ) : error ? (
-                        <p>{error}</p>
-                    ) : (
-                        fetchEmp.slice(0,3).map((n, index) => (
-                            <div className="card mb-3" key={index}>
-                                <div className="row g-0">
-                                    <div className="col-sm-6 col-xl-4 p-1">
-                                        <img src={n.photo || (n.gender === 'M' ? malelogo1 : n.gender === 'F' ? femalelogo : nogenderlogo)} className='responsive-image' alt="Employee" />
-                                    </div>
-                                    <div className="col-sm-6 col-xl-7 p-1">
-                                        <div className="card-body">
-                                            <h5 className="card-title">{n.rank_np_name}</h5>
-                                            <p className='card-text p-0 m-1'>{n.name_np}</p>
-                                            <p className='card-text p-0 m-1'>{n.contact}</p>
-                                            <p className='card-text p-0 m-1'>{n.email}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
+                        {/* Image Container */}
+                        <Box sx={{
+                            p: 2,
+                            bgcolor: 'background.paper',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <img
+                                src={office_image}
+                                alt="Office Building"
+                                style={{
+                                    width: "100%",   // Makes image responsive to the Grid
+                                    height: "auto",  // Maintains aspect ratio
+                                    maxHeight: "300px", // Prevents stretching beyond 520px
+                                    objectFit: "cover" // Ensures the image fits neatly
+                                }}
+                            />
+                        </Box>
+                    </Grid2>
 
-                <div className="row">
-                    <div className="col-md-9 col-sm-12">
-                        <hr className='mt-2' />
-                        <h2 className='text-center text-danger'><u>परिचय</u></h2>
-                        <hr />
-                        <p className='fs-5' style={{textAlign:'justify'}}>                            
-                            {office ? office.office_np : 'Loading office info...'}
-                        </p>
-                        <hr />
-                    </div>
-                    <div className="col-md-3 col-sm-12">
-                        <div className="card" style={{ width: "18rem" }}>
-                            <div className="card-body bg-primary text-white">
-                                <h2 className='text-center'>M</h2>
-                            </div>
-                        </div>
-                        <div className="card" style={{ width: "18rem" }}>
-                            <div className="card-body bg-primary text-white">
-                                <h2 className='text-center'>सूचनाको हक</h2>
-                            </div>
-                        </div>
+                    {/* Right Side ko Grid */}
+                    <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Grid2 size={{ xs: 12, sm: 6, md: 12 }}>
+                            <Grid2 container sx={{ p: 2, bgcolor: 'background.paper' }}>
+                                {loading ? (<p>Loading employees...</p>) : error ? (<p>{error}</p>) : (
+                                    fetchEmp.slice(0, 3).map((n, index) => (
+                                        <>
+                                            <Grid2 size={{ sm: 6, md: 3 }}>
+                                                <img src={n.photo || (n.gender === 'M' ? malelogo1 : n.gender === 'F' ? femalelogo : nogenderlogo)}
+                                                    style={{
+                                                        width: "100%",   // Makes image responsive to the Grid
+                                                        height: "auto",  // Maintains aspect ratio
+                                                        // minHeight: "100px", // Prevents stretching beyond 100px
+                                                        maxHeight: "250px", // Prevents stretching beyond 520px
+                                                        objectFit: "cover" // Ensures the image fits neatly
+                                                    }}
+                                                    alt={n.name_np} />
+                                            </Grid2>
 
-                        {/* <div className="card" style={{ width: "18rem" }}>
-                            <div className="card-body bg-primary text-white">
-                                <h2 className='text-center'>उजुरी/गुनासो</h2>
-                            </div>
-                        </div> */}
+                                            <Grid2 size={{ sm: 6, md: 9 }} sx={{ p: 1 }}>
+                                                <h6 style={{ color: 'red' }}>{n.rank_np_name}</h6>
+                                                <p className='card-text p-0 m-1'>{n.name_np}({n.contact})</p>
+                                                <p className='card-text p-0 m-1'>{n.email}</p>
+                                            </Grid2>
+                                        </>
+                                    ))
+                                )}
+                            </Grid2>
+                        </Grid2>
+                    </Grid2>
+                </Grid2>
 
-                    </div>
-                </div>
-                <div className="row">
-                    <Notice_Bolpatra />
+                <Grid2 container spacing={1}>
+                    <Grid2 size={{ xs: 12, sm: 6, md: 9 }}>
+                        <Box sx={{
+                            p: 2,
+                            bgcolor: 'background.paper',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <AboutOfficeCard info={office ? office.office_np : 'Loading office info...'} />
+                        </Box>
+                    </Grid2>
 
-                    
-                </div>
-            </div>
-        </div>
+                    {/* Right Side ko Grid */}
+                    <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Grid2 size={{ xs: 12, sm: 6, md: 12 }}>
+                            <Grid2 container sx={{ bgcolor: 'background.paper' }}>
+                                <>
+                                    <Grid2 size={{ sm: 5 }} sx={{ m: 1 }}>
+                                        <Link to='https://mail.nepal.gov.np/'>
+                                            <ActionAreaCard title={'@'} info={'ईमेल'} />
+                                        </Link>
+                                    </Grid2>
+
+                                    <Grid2 size={{ sm: 5 }} sx={{ m: 1 }}>
+                                        <Link to='/self-publications'>
+                                            <ActionAreaCard title={<CampaignIcon fontSize='large'/>} info={'सूचनाको हक'} />
+                                        </Link>
+                                    </Grid2>
+
+                                    <Grid2 size={{ sm: 5 }} sx={{ m: 1 }}>
+                                        <Link to='/feedback'>
+                                            <ActionAreaCard title={<ForumIcon fontSize='large'/>} info={'उजुरी/गुनासो'} />
+                                        </Link>
+                                    </Grid2>
+                                </>
+                            </Grid2>
+                        </Grid2>
+                    </Grid2>
+                </Grid2>
+
+                <Grid2 container spacing={1}>
+                    <Grid2 size={{ xs: 12, sm: 6, md: 9 }}>
+                        <Notice_Bolpatra/>
+                    </Grid2>
+
+                    {/* Right Side ko Grid */}
+                    <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Grid2 size={{ xs: 12, sm: 6, md: 12 }}>
+                            <Grid2 container sx={{ bgcolor: 'background.paper' }}>
+                                
+
+                            </Grid2>
+                        </Grid2>
+                    </Grid2>
+                </Grid2>
+            </Box>
+        </>
     );
 };
 

@@ -39,6 +39,7 @@ const PrisionerReleaseForm = React.lazy(() => import('./Components/Admin/Prision
 import TopNavbar from './Components/Header&Footer/TopNavbar';
 import Combined from './Components/Header&Footer/Combined';
 import CaseDetails from './Components/Admin/OtherRequired/CaseDetails';
+import Home from './Components/Client/Home';
 
 const Nepalidate = new NepaliDate();
 const currentDate = Nepalidate.format('YYYY-MM-DD')
@@ -60,7 +61,10 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/logout' element={<LogoutButton />} />
             <Route path='/cases' element={<CaseForm />} />
+            
             <Route path='/' element={<Combined />} >
+
+            <Route path='/' element={<Home />} />
               <Route path='/police' >
                 <Route index element={<CountPoliceReport />} />
                 <Route path='addpolice' element={<PoliceForm />} />
