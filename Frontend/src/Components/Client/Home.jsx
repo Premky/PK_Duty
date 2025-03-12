@@ -81,16 +81,24 @@ const Home = () => {
             <Box sx={{ flexGrow: 1 }}>
                 <Grid2 container spacing={1}>
                     <Grid2 size={{ xs: 12, sm: 6, md: 9 }}>
-                        <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
-                            <marquee behavior="" direction="" scrollamount="1">
-                                सुचना-2 लाई सुचना 5git बनाइएको छ ।
-                            </marquee>
+                        <Box sx={{ p: 2, }}>
+                            <Grid2 container spacing={1} >
+                                <Grid2 item sx={{ backgroundColor: 'red', color: 'white', p: 1, borderRadius: 2 }}
+                                    size={{ sm: 1 }} textAlign={'center'}>
+                                    सुचनाः
+                                </Grid2>
+                                <Grid2 item size={{ sm: 11 }} textAlign={'center'} borderColor='grey.500' sx={{borderTop:1, borderBottom:1}}>
+                                    <marquee behavior="" direction="" scrollamount="1">
+                                        सुचना-2 लाई सुचना 5git बनाइएको छ ।
+                                    </marquee>
+                                </Grid2>
+                            </Grid2>
                         </Box>
 
                         {/* Image Container */}
                         <Box sx={{
                             p: 2,
-                            bgcolor: 'background.paper',
+
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center'
@@ -111,7 +119,7 @@ const Home = () => {
                     {/* Right Side ko Grid */}
                     <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                         <Grid2 size={{ xs: 12, sm: 6, md: 12 }}>
-                            <Grid2 container sx={{ p: 2, bgcolor: 'background.paper' }}>
+                            <Grid2 container sx={{ p: 2 }}>
                                 {loading ? (<p>Loading employees...</p>) : error ? (<p>{error}</p>) : (
                                     fetchEmp.slice(0, 3).map((n, index) => (
                                         <>
@@ -149,7 +157,7 @@ const Home = () => {
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}>
-                            <AboutOfficeCard info={office ? office.office_np : 'Loading office info...'} />
+                            <AboutOfficeCard info={office ? office.office_detail_np : 'Loading office info...'} />
                         </Box>
                     </Grid2>
 
@@ -166,13 +174,13 @@ const Home = () => {
 
                                     <Grid2 size={{ sm: 5 }} sx={{ m: 1 }}>
                                         <Link to='/self-publications'>
-                                            <ActionAreaCard title={<CampaignIcon fontSize='large'/>} info={'सूचनाको हक'} />
+                                            <ActionAreaCard title={<CampaignIcon fontSize='large' />} info={'सूचनाको हक'} />
                                         </Link>
                                     </Grid2>
 
                                     <Grid2 size={{ sm: 5 }} sx={{ m: 1 }}>
                                         <Link to='/feedback'>
-                                            <ActionAreaCard title={<ForumIcon fontSize='large'/>} info={'उजुरी/गुनासो'} />
+                                            <ActionAreaCard title={<ForumIcon fontSize='large' />} info={'उजुरी/गुनासो'} />
                                         </Link>
                                     </Grid2>
                                 </>
@@ -183,14 +191,14 @@ const Home = () => {
 
                 <Grid2 container spacing={1}>
                     <Grid2 size={{ xs: 12, sm: 6, md: 9 }}>
-                        <Notice_Bolpatra/>
+                        <Notice_Bolpatra />
                     </Grid2>
 
                     {/* Right Side ko Grid */}
                     <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
                         <Grid2 size={{ xs: 12, sm: 6, md: 12 }}>
                             <Grid2 container sx={{ bgcolor: 'background.paper' }}>
-                                
+
 
                             </Grid2>
                         </Grid2>

@@ -47,7 +47,9 @@ const Header = () => {
   return (
     <div className='row container-fluid p-3'>
       <div className='col-md-2 col-sm-2 col-xs-12 text-center'>
-        <img src={np_govt_logo} alt="Logo" height={100} />
+        <Link to='/'>
+          <img src={np_govt_logo} alt="Logo" height={100} />
+        </Link>
       </div>
 
       <div className="col-md-6 col-sm-8 col-xs-12 text-center text-danger headoffice">
@@ -63,8 +65,6 @@ const Header = () => {
           <h5 className='m-0 p-0'>कारागार व्यवस्थापन विभाग</h5>
           <h6 className='m-0 p-0'>कालिकास्थान, काठमाडौं</h6>
         </>)}
-
-
         <h2 className='office_name'><strong>{office_np || 'कारागार कार्यालय संखुवासभा'}</strong></h2>
       </div>
 

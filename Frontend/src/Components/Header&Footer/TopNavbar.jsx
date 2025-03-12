@@ -16,8 +16,8 @@ import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 
 import Logout from '../Login/Logout';
 // Pages and their corresponding routes
-const pagesLabel = ['कैदीबन्दीको संख्या', 'कैदीबन्दीको नामावली' ,'प्रहरी कर्मचारीको विवरण', 'कैदीबन्दीको विवरण थप्नुहोस', 'आश्रितको विवरण थप्नुहोस्', 'कैदमुक्त'];
-const pages = ['police', 'police/prisioners', 'police/addpolice' , 'police/addprisioner','police/aashrit','police/releaseform']; // corresponding paths
+const pagesLabel = ['कैदीबन्दीको संख्या', 'कैदीबन्दीको नामावली', 'प्रहरी कर्मचारीको विवरण', 'कैदीबन्दीको विवरण थप्नुहोस', 'आश्रितको विवरण थप्नुहोस्', 'कैदमुक्त'];
+const pages = ['police', 'police/prisioners', 'police/addpolice', 'police/addprisioner', 'police/aashrit', 'police/releaseform']; // corresponding paths
 
 function TopNavbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -44,7 +44,7 @@ function TopNavbar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    
+
                     {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}> */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
                         {pagesLabel.map((label, index) => (
@@ -54,12 +54,7 @@ function TopNavbar() {
                                 sx={{ my: 2, color: 'white' }}
                             >
                                 {/* Use the 'Link' component for navigation */}
-                            {/* <Button
-                                key={label}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                Use the 'Link' component for navigation */}
+                                {/* Use the 'Link' component for navigation */}
                                 <Link to={`/${pages[index]}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     {label} {/* Display the readable label */}
                                 </Link>
@@ -67,8 +62,8 @@ function TopNavbar() {
                         ))}
                     </Box>
 
-                    <Box>
-                        <Logout/>
+                    <Box>                        
+                            <Logout />                        
                     </Box>
                 </Toolbar>
             </Container>

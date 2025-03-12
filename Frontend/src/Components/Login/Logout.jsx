@@ -1,5 +1,7 @@
+import { Button } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -35,9 +37,20 @@ const Logout = () => {
   };
 
   return (
-    <div className="logout-button" onClick={handleLogout}>
-      Logout
-    </div>
+    <Button
+      variant="text"
+      sx={{
+        color: "white",
+        "&:hover": {
+          color: "red", // Change color to red on hover
+        },
+      }}
+      onClick={handleLogout}
+    >
+      <PowerSettingsNewIcon />
+    </Button>
+
+
   );
 };
 
