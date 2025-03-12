@@ -64,6 +64,9 @@ const CommonPrisionersTable = () => {
                             <TableCell>मुद्दा</TableCell>
                             <TableCell>ठेगाना</TableCell>
                             <TableCell>उमेर</TableCell>
+                            <TableCell>थुना परेको मिति</TableCell>
+                            <TableCell>कारागार परेको मिति</TableCell>
+                            <TableCell>छुट्ने मिति</TableCell>
                             <TableCell colSpan={2} className="text-center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -78,6 +81,9 @@ const CommonPrisionersTable = () => {
                                     <TableCell>{record.case_np}</TableCell>
                                     <TableCell>{record.address}</TableCell>
                                     <TableCell>{record.age}</TableCell>
+                                    <TableCell>{record.arrested}</TableCell>
+                                    <TableCell>{record.karagar_date}</TableCell>
+                                    <TableCell>{record.release_date}</TableCell>
                                     <TableCell>
                                         <Button onClick={() => onEdit(record)} variant="outlined" color="primary">
                                             <EditIcon />
