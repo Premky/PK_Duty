@@ -21,10 +21,10 @@ export default function AboutOfficeCard({ info }) {
           <Grid2 container pl={2}
             sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'blue', color: 'white', width: '100%' }}>
 
-            <Grid2 item size={{ sm: 1 }} p={2} borderRadius={5}
+            {/* <Grid2 item size={{ sm: 1 }} p={2} borderRadius={5}
               sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'red', color: 'white' }}>
-              <HouseIcon />
-            </Grid2>
+            </Grid2> */}
+              <HouseIcon sx={{color:'red',     }} />
 
             <Grid2 item size={{ sm: 10 }} p={1}>
               परिचय

@@ -258,6 +258,7 @@ const PrisionersForm = () => {
         setValue('karagar_date', record.karagar_date);
         setValue('arrested', record.arrested);
         setValue('release_date', record.release_date);
+        // setValue('release_date', faisala_date);
         setValue('faisala_office', record.faisala_office);
         setValue('faisala_date', record.faisala_date);
         setValue('punarabedan', record.punarabedan);
@@ -590,26 +591,7 @@ const PrisionersForm = () => {
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.release_date}>
                                         <label htmlFor="release_date">कैद मुक्त हुने मिति<span>*</span></label>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                            {/* <Controller
-                                                name="release_date"
-                                                control={control}
-                                                // rules={{ required: "This field is required" }}
-                                                render={({ field: { onChange, onBlur, value, ref } }) => (
-                                                    <NepaliDatePicker
-                                                        value={value || ""} // Ensure empty string when no date is selected
-                                                        onChange={(release_date) => {
-                                                            onChange(release_date); // Update form state
-                                                            setReleaseDate(release_date); // Update state
-                                                            calculate_duration(arrestedDate, release_date); // Trigger duration calculation
-                                                        }}
-                                                        onBlur={onBlur} // Handle blur
-                                                        dateFormat="YYYY-MM-DD" // Customize your date format
-                                                        placeholder="Select Nepali Date"
-                                                        ref={ref} // Use ref from react-hook-form
-                                                    />
-                                                )}
-                                            /> */}
-                                            <Controller
+                                               <Controller
                                                 name="release_date"
                                                 control={control}
                                                 // rules={{ required: "This field is required" }}
@@ -667,25 +649,31 @@ const PrisionersForm = () => {
                                     }} error={!!errors.faisala_date}>
 
                                         <label htmlFor="faisala_date">फैसला मिति</label>
-                                        {/* <NepaliDatePicker
-                                            inputClassName="form-control"
-                                            // value={date}
-                                            {...register('faisala_date')}
-                                            options={{ calenderLocale: "ne", valueLocale: "en" }}
-                                        /> */}
                                         <Controller
                                             name="faisala_date"
                                             control={control}
                                             // rules={{ required: "This field is required" }}
                                             render={({ field: { onChange, onBlur, value, ref } }) => (
+                                                // <DateInputField
+                                                //     name="faisala_date"
+                                                //     value={value || ""}
+                                                //     onChange={(e) => onChange(e.target.value)} // Pass only the value
+                                                //     onBlur={onBlur}
+                                                //     ref={ref}
+                                                //     placeholder="YYYY-MM-DD"
+                                                // />
                                                 <DateInputField
-                                                    name="faisala_date"
-                                                    value={value || ""}
-                                                    onChange={(e) => onChange(e.target.value)} // Pass only the value
-                                                    onBlur={onBlur}
-                                                    ref={ref}
-                                                    placeholder="YYYY-MM-DD"
-                                                />
+                                                        name="faisala_date"
+                                                        value={value || ""}
+                                                        onChange={(faisala_date) => {
+                                                            const value = faisala_date.target ? faisala_date.target.value : faisala_date;
+                                                            onChange(value)
+                                                            setFaisalaDate(value);                                                            
+                                                        }}
+                                                        onBlur={onBlur}
+                                                        ref={ref}
+                                                        placeholder="YYYY-MM-DD"
+                                                    />
                                             )}
                                         />
                                         {errors.faisala_date && <p style={{ color: 'red' }}>{errors.faisala_date.message}</p>} {/* Display validation error */}
