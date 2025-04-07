@@ -72,7 +72,7 @@ const CountPoliceReport = () => {
                 startDate: data?.startDate || formattedDateNp,
                 endDate: data?.endDate || formattedDateNp,
             }).toString();
-            console.log(queryParams)
+            // console.log(queryParams)
             const fullUrl = `${url}?${queryParams}`;
 
             const response = await axios.get(fullUrl, {
@@ -107,7 +107,7 @@ const CountPoliceReport = () => {
                 startDate: data?.startDate || formattedDateNp,
                 endDate: data?.endDate || formattedDateNp,
             }).toString();
-            console.log(queryParams)
+            console.log("Query Params:",queryParams)
             const fullUrl = `${url}?${queryParams}`;
 
             const response = await axios.get(fullUrl, {
@@ -153,7 +153,7 @@ const CountPoliceReport = () => {
             if (Status) {
                 if (Result?.length > 0) {
                     setReleasedCounts(Result[0]);
-                    console.log("Fetched data:", Result[0]);
+                    // console.log("Fetched data:", Result[0]);
                 } else {
                     console.log("No Record Found");
                 }
@@ -228,6 +228,7 @@ const CountPoliceReport = () => {
             }
         );
         setTotals(totals);
+        // console.log(totals);
     };
     const calculateForeignTotals = (data) => {
         const totals = data.reduce(

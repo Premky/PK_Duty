@@ -248,8 +248,8 @@ router.get('/ranks', async (req, res) => {
 router.get('/police_commander', verifyToken, async (req, res) => {
     // console.log('Rank working');
     const userToken = req.user;
-    const main_office = userToken.main_office;
-
+    const main_office = userToken.office;
+    
     const sql = `SELECT se.*, r.rank_np as ranknp, r.rank_en as ranken
                     FROM sec_employe se 
                     LEFT JOIN sec_ranks r ON se.rank_id = r.id 

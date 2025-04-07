@@ -26,6 +26,7 @@ import { useActionState } from 'react'
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import { exportToExcel } from './ExportPoliceWeekly'
+import FullWidthTabs from '../Prisioners/TabPanel'
 // Lazy load the TableBodyComponent
 const LazyCountTableBody = React.lazy(() => import('./CountTableBody'));
 
@@ -249,12 +250,11 @@ const CountPoliceReport = () => {
                 <button onClick={ExportPoliceWeekly} className='btn btn-sm btn-success'>Download</button>
             </div>
             <div className="report_data">
+
                 {/* Suspense to show a fallback while the body is loading */}
                 <Suspense fallback={<div>Loading...</div>}>
-                    {!isLoading && <LazyCountTableBody records={records} totals={totals}
-                        // startDate={queryParams.startDate}
-                        // endDate={queryParams.endDate}
-                    />}
+                    {/* <FullWidthTabs records={records} totals={totals} /> */}
+                    {!isLoading && <LazyCountTableBody records={records} totals={totals}/>}
                 </Suspense>
             </div>
         </>

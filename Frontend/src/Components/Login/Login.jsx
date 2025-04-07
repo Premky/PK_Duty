@@ -42,7 +42,7 @@ const Login = (onLogin) => {
             case 'प्रहरी':
                 return '/police';
             case 'प्रशासन':
-                return '/prisioner';
+                return '/prisoners';
             default:
                 return '/';
         }

@@ -5,7 +5,7 @@ import {
     MenuItem
 } from '@mui/material';
 const ReleasedPrisionersTable = ({releasedCounts}) => {
-    
+    // console.log(releasedCounts)
     return (
         <>
             <Table size='small'>

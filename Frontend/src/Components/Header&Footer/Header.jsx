@@ -61,9 +61,11 @@ const Header = () => {
           <h5 className='m-0 p-0'>कारागार व्यवस्थापन विभाग</h5>
         </>):(<></>)} */}
 
-        {isValidUser ? (<>  </>) : (<>
           <h5 className='m-0 p-0'>कारागार व्यवस्थापन विभाग</h5>
           <h6 className='m-0 p-0'>कालिकास्थान, काठमाडौं</h6>
+        {isValidUser ? (<>  </>) : (<>
+          {/* <h5 className='m-0 p-0'>कारागार व्यवस्थापन विभाग</h5>
+          <h6 className='m-0 p-0'>कालिकास्थान, काठमाडौं</h6> */}
         </>)}
         <h2 className='office_name'><strong>{office_np || 'कारागार कार्यालय संखुवासभा'}</strong></h2>
       </div>
@@ -75,7 +77,7 @@ const Header = () => {
         {formattedDateNp}, {dayName} <br />
         {nepaliTime} &nbsp;
         <hr />
-        [Slogan]
+        [Slogan] [{localStorage.getItem('type')}]
         <hr />
       </div>
       <hr />

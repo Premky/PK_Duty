@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
-
+import Swal from 'sweetalert2'
 // import PoliceRecordTable from './PoliceRecordTable';
 // import Select from '@mui/material'
 
@@ -65,7 +65,7 @@ const PrisionersForm = () => {
 
     const calculate_duration = (s, e) => {
         if (s && e) {
-            
+
             const start = new Date(s);
             const end = new Date(e);
 
@@ -195,7 +195,12 @@ const PrisionersForm = () => {
 
 
                 if (result.data.Status) {
-                    alert(`Record ${editing ? 'updated' : 'added'} ${result.data.id} successfully!`);
+                    // alert(`Record ${editing ? 'updated' : 'added'} ${result.data.id} successfully!`);
+                    Swal.fire({
+                        title: `Record ${editing ? 'updated' : 'created'} successfully!`,
+                        icon: "success",
+                        draggable: true
+                    });
                     reset();
                     setEditing(false);
                     setCurrentData(null);
@@ -204,7 +209,11 @@ const PrisionersForm = () => {
 
             } catch (err) {
                 console.error(err);
-                alert('Failed to save.')
+                Swal.fire({
+                    title: err.response.data.Error,
+                    icon: 'error',
+                    draggable: true
+                });
             }
         })
     };
@@ -475,7 +484,8 @@ const PrisionersForm = () => {
                                                         value={value || ""}
                                                         onChange={(e) => {
                                                             const value = e.target ? e.target.value : e;
-                                                            onChange(value)}} // Pass only the value
+                                                            onChange(value)
+                                                        }} // Pass only the value
                                                         onBlur={onBlur}
                                                         ref={ref}
                                                         placeholder="YYYY-MM-DD"
@@ -591,7 +601,7 @@ const PrisionersForm = () => {
                                     <FormControl sx={{ "& input": { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" } }} error={!!errors.release_date}>
                                         <label htmlFor="release_date">कैद मुक्त हुने मिति<span>*</span></label>
                                         <div className="col-xl-3 col-md-4 col-sm-12">
-                                               <Controller
+                                            <Controller
                                                 name="release_date"
                                                 control={control}
                                                 // rules={{ required: "This field is required" }}
@@ -663,17 +673,17 @@ const PrisionersForm = () => {
                                                 //     placeholder="YYYY-MM-DD"
                                                 // />
                                                 <DateInputField
-                                                        name="faisala_date"
-                                                        value={value || ""}
-                                                        onChange={(faisala_date) => {
-                                                            const value = faisala_date.target ? faisala_date.target.value : faisala_date;
-                                                            onChange(value)
-                                                            setFaisalaDate(value);                                                            
-                                                        }}
-                                                        onBlur={onBlur}
-                                                        ref={ref}
-                                                        placeholder="YYYY-MM-DD"
-                                                    />
+                                                    name="faisala_date"
+                                                    value={value || ""}
+                                                    onChange={(faisala_date) => {
+                                                        const value = faisala_date.target ? faisala_date.target.value : faisala_date;
+                                                        onChange(value)
+                                                        setFaisalaDate(value);
+                                                    }}
+                                                    onBlur={onBlur}
+                                                    ref={ref}
+                                                    placeholder="YYYY-MM-DD"
+                                                />
                                             )}
                                         />
                                         {errors.faisala_date && <p style={{ color: 'red' }}>{errors.faisala_date.message}</p>} {/* Display validation error */}

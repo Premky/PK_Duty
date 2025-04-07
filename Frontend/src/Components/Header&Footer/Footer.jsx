@@ -84,7 +84,7 @@ const Footer = () => {
                     <Grid2 item size={{ xs: 12, sm: 6, md: 4 }}>
                         <Grid2 container spacing={2} justifyContent="center">
                             <SimpleMap />
-                            <Link to="/admin/" className="text-white">Go to Admin</Link>
+                            <Link to="/login/" className="text-white">Go to Admin</Link>
                             <Box>
                             </Box>
                         </Grid2>

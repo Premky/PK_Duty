@@ -28,6 +28,7 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.1.1",
     "react-select": "^5.9.0",
+    "sweetalert2": "^11.17.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

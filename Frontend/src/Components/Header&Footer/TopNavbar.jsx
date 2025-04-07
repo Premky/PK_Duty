@@ -1,69 +1,95 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { Link } from 'react-router-dom';  // Import Link from react-router-dom
-
+import Container from '@mui/material/Container';
 import Logout from '../Login/Logout';
-// Pages and their corresponding routes
-const pagesLabel = ['कैदीबन्दीको संख्या', 'कैदीबन्दीको नामावली', 'प्रहरी कर्मचारीको विवरण', 'कैदीबन्दीको विवरण थप्नुहोस', 'आश्रितको विवरण थप्नुहोस्', 'कैदमुक्त'];
-const pages = ['police', 'police/prisioners', 'police/addpolice', 'police/addprisioner', 'police/aashrit', 'police/releaseform']; // corresponding paths
 
 function TopNavbar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [userType, setUserType] = useState(null);
+    const [pagesLabel, setPagesLabel] = useState([]);
+    const [pages, setPages] = useState([]);
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
+    useEffect(() => {
+        const type = localStorage.getItem('type');
+        setUserType(type);
 
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
+        if (type === 'Superadmin') {
+            setPagesLabel([
+                'कैदीबन्दीको संख्या',
+                'कैदीबन्दीको नामावली',
+                'प्रहरी कर्मचारीको विवरण',
+                'कैदीबन्दीको विवरण थप्नुहोस',
+                'आश्रितको विवरण थप्नुहोस्',
+                'कैदमुक्त'
+            ]);
+            setPages([
+                'police',
+                'police/prisoners', // Fixed typo
+                'police/addpolice',
+                'police/addprisoner', // Fixed typo
+                'police/aashrit',
+                'police/releaseform'
+            ]);
+        } else if(type=='User') {
+            setPagesLabel([
+                'कैदीबन्दीको संख्या',
+                'कैदीबन्दीको नामावली',
+                'कैदीबन्दीको विवरण थप्नुहोस',
+                'आश्रितको विवरण थप्नुहोस्',
+                'कैदमुक्त',
+                'मास्केबारी'
+            ]);
+            setPages([
+                'police',
+                'police/prisoners', 
+                'police/addprisoner', 
+                'police/aashrit',
+                'police/releaseform',
+                'count'                
+            ]);
+        } else if(type) {
+            setPagesLabel([
+                'कैदीबन्दीको संख्या',
+                'कैदीबन्दीको नामावली',
+                'कैदीबन्दीको विवरण थप्नुहोस',
+                'आश्रितको विवरण थप्नुहोस्',
+                'कैदमुक्त',
+                'मास्केबारी'
+            ]);
+            setPages([
+                'police',
+                'police/prisoners', 
+                'police/addprisoner', 
+                'police/aashrit',
+                'police/releaseform',
+                '/count'
+            ]);
+        }
+    }, []);
 
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-
-                    {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}> */}
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                    <Box sx={{ flexGrow: 1, display: 'flex' }}>
                         {pagesLabel.map((label, index) => (
                             <Button
                                 key={label}
-                                onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'white' }}
                             >
-                                {/* Use the 'Link' component for navigation */}
-                                {/* Use the 'Link' component for navigation */}
                                 <Link to={`/${pages[index]}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    {label} {/* Display the readable label */}
+                                    {label}
                                 </Link>
                             </Button>
                         ))}
                     </Box>
 
-                    <Box>                        
-                            <Logout />                        
+                    <Box>
+                        <Logout />
                     </Box>
                 </Toolbar>
             </Container>

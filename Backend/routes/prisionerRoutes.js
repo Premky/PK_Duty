@@ -465,6 +465,7 @@ router.post('/add_aashrit', verifyToken, async (req, res) => {
 router.get('/get_released_counts', verifyToken, async (req, res) => {
     const userToken = req.user; // Extract details from the token
     const endDate = req.query.endDate;
+    
     const curr_year = new NepaliDate().format('YYYY');
     const curr_month = new NepaliDate().format('MM');
     const prev_month = (new NepaliDate().format('MM') - 1).toString().padStart(2, '0');
@@ -482,7 +483,7 @@ router.get('/get_released_counts', verifyToken, async (req, res) => {
     // const this_month = curr_year + '-' + curr_month + '-' + 1;
     
 
-    // console.log(prev_month_date, this_month)
+    console.log('Prisioner Route 485', prev_month_date, this_month)
     // console.log('mainoffice', userToken.main_office);    
     const sql = `SELECT 
         SUM(CASE WHEN pi.release_id IS NOT NULL AND pi.released_date>='${fy_date}' AND prd.reason=1 THEN 1 ELSE 0 END) AS TotalRegYear,
