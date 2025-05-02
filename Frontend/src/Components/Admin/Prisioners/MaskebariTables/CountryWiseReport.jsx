@@ -4,13 +4,16 @@ import {
     FormControl, Container, Select, InputLabel,
     MenuItem
 } from '@mui/material';
-const CountryWiseReport = ({records, totals}) => {
+const CountryWiseReport = ({ records, totals, type }) => {
     return (
         <>
             <Table size='small'>
                 <TableHead>
                     <TableRow>
-                        <TableCell colSpan={20}>मुद्दा अनुसारको स्वदेशी कैदीबन्दीहरुको संख्याः</TableCell>
+                        <TableCell colSpan={20}>
+                            {`मुद्दा अनुसारको ${type === 'nepali' ? 'स्वदेशी' : 'विदेशी'} कैदीबन्दीहरुको संख्याः`}
+                        </TableCell>
+
                     </TableRow>
                     <TableRow className='bg-primary bg-gradient'>
                         <TableCell align="center" rowSpan={2}>सि.नं.</TableCell>
@@ -68,7 +71,7 @@ const CountryWiseReport = ({records, totals}) => {
 
                             <TableCell align='center'>{record.KaidiAgeAbove65}</TableCell>
                             <TableCell align='center'>{record.ThunuwaAgeAbove65}</TableCell>
-                            <TableCell align='center'>{record.CountryName||''}</TableCell>
+                            <TableCell align='center'>{record.CountryName || ''}</TableCell>
                         </TableRow>
                     ))}
                     <TableRow key='total' >

@@ -14,13 +14,18 @@ const PrisionersRecordTable = ({ records, onEdit, onDelete }) => {
                         <TableCell>मुद्दा</TableCell>
                         <TableCell>ठेगाना</TableCell>
                         <TableCell>उमेर</TableCell>
+                        <TableCell>लिङ्ग</TableCell>
+                        <TableCell>थुना परेको मिति</TableCell>
+                        <TableCell>कारागार परेको मिति</TableCell>
+                        <TableCell>छुट्ने मिति</TableCell>
+                        {/* <TableCell>बाँकी कैद</TableCell> */}
                         <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {records.map((record, index) => (
                         <TableRow key={record.id}>
-                            <TableCell>{index+1}</TableCell>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell>{record.prisioner_type}</TableCell>
                             <TableCell>{record.name_np}</TableCell>
                             {/* <TableCell>{record.jaherwala}</TableCell> */}
@@ -28,6 +33,10 @@ const PrisionersRecordTable = ({ records, onEdit, onDelete }) => {
                             <TableCell>{record.address}</TableCell>
                             <TableCell>{record.age}</TableCell>
                             <TableCell>{record.gender}</TableCell>
+                            <TableCell>{record.arrested}</TableCell>
+                            <TableCell>{record.karagar_date}</TableCell>
+                            <TableCell>{record.release_date}</TableCell>
+                            {/* <TableCell>{}</TableCell> */}
                             <TableCell>
                                 <Button onClick={() => onEdit(record)} variant="outlined" color="primary">
                                     Edit
