@@ -194,11 +194,11 @@ const CommonPrisionersTable = () => {
                             </TableCell>
                             <TableCell>छुट्ने मिति</TableCell>
 
-                            <TableCell sortDirection={sortConfig.key === 'duration' ? sortConfig.direction : false}>
+                            <TableCell sortDirection={sortConfig.key === 'formattedDuration' ? sortConfig.direction : false}>
                                 <TableSortLabel
-                                    active={sortConfig.key === 'duration'}
+                                    active={sortConfig.key === 'formattedDuration'}
                                     direction={sortConfig.direction}
-                                    onClick={() => handleSort('duration')}
+                                    onClick={() => handleSort('formattedDuration')}
                                 >
                                      कैद अवधी                                     
                                 </TableSortLabel>
@@ -221,12 +221,15 @@ const CommonPrisionersTable = () => {
                             filteredRecords.map((record, index) => {
                                 // Calculate duration in years, months, and days
                                 const arrestDate = new Date(record.arrested);
+                                const karagarDate = new Date(record.karagar_date);
                                 const releaseDate = new Date(record.release_date);
-                                const duration = Math.floor((releaseDate - arrestDate) / (1000 * 60 * 60 * 24));
+                                const startDate = arrestDate || karagarDate;
+                                const duration = Math.floor((releaseDate - startDate) / (1000 * 60 * 60 * 24));
                                 const years = Math.floor(duration / 365);
                                 const months = Math.floor((duration % 365) / 30);
                                 const days = duration % 30;
-                                const formattedDuration = `${years}|${months}|${days}|`;
+                                // const formattedDuration = `${years}|${months}|${days}|`;
+                                const formattedDuration = years;
                                 // Calculate remaining days for release_date
                                 const remainingDays = record.release_date
                                     ? Math.ceil(
