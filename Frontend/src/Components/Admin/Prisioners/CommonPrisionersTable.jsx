@@ -95,6 +95,12 @@ const CommonPrisionersTable = () => {
                 bValue = bValue.toLowerCase();
             }
 
+            if (key === 'duration') {
+                // Simply compare the strings alphabetically (ignoring case)
+                aValue = Number(aValue);
+                bValue = Number(bValue);
+            }
+
             if (aValue < bValue) return direction === 'asc' ? -1 : 1;
             if (aValue > bValue) return direction === 'asc' ? 1 : -1;
             return 0;
@@ -187,6 +193,17 @@ const CommonPrisionersTable = () => {
                                 </TableSortLabel>
                             </TableCell>
                             <TableCell>छुट्ने मिति</TableCell>
+
+                            <TableCell sortDirection={sortConfig.key === 'duration' ? sortConfig.direction : false}>
+                                <TableSortLabel
+                                    active={sortConfig.key === 'duration'}
+                                    direction={sortConfig.direction}
+                                    onClick={() => handleSort('duration')}
+                                >
+                                     कैद अवधी                                     
+                                </TableSortLabel>
+                            </TableCell>
+
                             <TableCell sortDirection={sortConfig.key === 'release_date' ? sortConfig.direction : false}>
                                 <TableSortLabel
                                     active={sortConfig.key === 'release_date'}
@@ -202,6 +219,15 @@ const CommonPrisionersTable = () => {
                     <TableBody>
                         {filteredRecords.length > 0 ? (
                             filteredRecords.map((record, index) => {
+                                // Calculate duration in years, months, and days
+                                const arrestDate = new Date(record.arrested);
+                                const releaseDate = new Date(record.release_date);
+                                const duration = Math.floor((releaseDate - arrestDate) / (1000 * 60 * 60 * 24));
+                                const years = Math.floor(duration / 365);
+                                const months = Math.floor((duration % 365) / 30);
+                                const days = duration % 30;
+                                const formattedDuration = `${years}|${months}|${days}|`;
+                                // Calculate remaining days for release_date
                                 const remainingDays = record.release_date
                                     ? Math.ceil(
                                         (new Date(record.release_date) - new Date(formattedDateNp)) / (1000 * 60 * 60 * 24)
@@ -220,6 +246,7 @@ const CommonPrisionersTable = () => {
                                         <TableCell>{record.arrested}</TableCell>
                                         <TableCell>{record.karagar_date}</TableCell>
                                         <TableCell>{record.release_date}</TableCell>
+                                        <TableCell>{formattedDuration}</TableCell>
                                         <TableCell>{remainingDays}</TableCell>
                                         <TableCell>
                                             <Button onClick={() => onEdit(record)} variant="outlined" color="primary">
