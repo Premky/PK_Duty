@@ -7,20 +7,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, BrowserRouter } fr
 // import './App.css'
 
 import NepaliDate from 'nepali-datetime'
-// import Login from './Components/Login/Login';
-// import PoliceForm from './Components/Admin/Police/PoliceForm';
-// import LogoutButton from './Components/Login/Logout';
-// import PrisionersForm from './Components/Admin/Prisioners/PrisionersForm';
-// import CaseForm from './Components/Admin/OtherRequired/CaseForm';
-// import CountPrisionerReport from './Components/Admin/Prisioners/CountReport';
-// import CountPoliceReport from './Components/Admin/Police/CountReport';
-// import AashritForm from './Components/Admin/Prisioners/AashritForm';
-// import PoliceIndexRoute from './Components/Admin/Police/PoliceIndexRoute';
-// import PrisionersIndexRoute from './Components/Admin/Prisioners/PrisionersIndexRoute';
-// import DutyMaker from './Components/Admin/Police/DutyMaker';
-// import PrisionersRecordTable from './Components/Admin/Prisioners/PrisionersRecordTable';
-// import CommonPrisionersTable from './Components/Admin/Prisioners/CommonPrisionersTable';
-// import PrisionerReleaseForm from './Components/Admin/Prisioners/PrisionerReleaseForm';
+
 
 const Login = React.lazy(() => import('./Components/Login/Login'));
 const PoliceForm = React.lazy(() => import('./Components/Admin/Police/PoliceForm'));

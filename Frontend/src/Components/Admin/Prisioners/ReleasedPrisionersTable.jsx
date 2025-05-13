@@ -85,6 +85,7 @@ const CommonPrisionersTable = () => {
                         <TableCell>मुद्दा</TableCell>
                         <TableCell>ठेगाना</TableCell>
                         <TableCell>उमेर</TableCell>
+                        <TableCell>कारागार मिति</TableCell>
                         <TableCell>कैदमुक्त मिति</TableCell>
                         <TableCell>कैदमुक्त कारण</TableCell>
                         <TableCell colSpan={2} className='text-center'>Actions</TableCell>
@@ -100,6 +101,7 @@ const CommonPrisionersTable = () => {
                             <TableCell>{record.case_np}</TableCell>
                             <TableCell>{record.address}</TableCell>
                             <TableCell>{record.age}</TableCell>
+                            <TableCell>{record.karagar_date}</TableCell>
                             <TableCell>{record.release_date}</TableCell>
                             <TableCell>{record.reason_np}</TableCell>
                             <TableCell>
