@@ -154,7 +154,7 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     const { address, arrested, case_id, country, dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
-        office_id, prisioner_type, punarabedan, release_date, total_duration } = req.body;
+        office_id, prisioner_type, punarabedan,karagar_date, release_date, total_duration } = req.body;
     console.log("Check Data:", id);
     const ad_dob = converttoad(dob);
 
@@ -170,11 +170,11 @@ router.put('/update_prisioner/:id', verifyToken, async (req, res) => {
                 SET
                 address=?, arrested=?, case_id=?, country=?, dob=?, dob_ad=?, duration=?, faisala_date=?,
                 faisala_office=?, fine=?, fine_duration=?, gender=?, jaherwala=?, name_en=?, name_np=?,
-                office_id=?, prisioner_type=?, punarabedan=?, release_date=?, total_duration=?,
+                office_id=?, prisioner_type=?, punarabedan=?, karagar_date=?, release_date=?, total_duration=?,
                 updated_by=?, updated_at=? WHERE id=?`;
     const values = [address, arrested, case_id, country, dob, ad_dob, duration, faisala_date,
         faisala_office, fine, fine_duration, gender, jaherwala, name_en, name_np,
-        office_id, prisioner_type, punarabedan, release_date, total_duration,
+        office_id, prisioner_type, punarabedan,karagar_date, release_date, total_duration,
         userToken.uid, new Date(), id
     ];
     console.log(values);
