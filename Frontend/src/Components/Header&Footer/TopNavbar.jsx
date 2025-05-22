@@ -41,6 +41,7 @@ function TopNavbar() {
                 'कैदीबन्दीको विवरण थप्नुहोस',
                 'आश्रितको विवरण थप्नुहोस्',
                 'कैदमुक्त',
+                'प्रहरी कर्मचारीको विवरण',
                 'मास्केबारी'
             ]);
             setPages([
@@ -49,6 +50,7 @@ function TopNavbar() {
                 'police/addprisoner', 
                 'police/aashrit',
                 'police/releaseform',
+                'police/addpolice',
                 'count'                
             ]);
         } else if(type) {
