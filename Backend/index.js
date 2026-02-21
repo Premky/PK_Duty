@@ -36,7 +36,8 @@ app.use(cors({
             'http://localhost:5174',
             'http://192.168.1.21:5173',
             'https://premsoft.vercel.app',
-            'https://premky.com.np'
+            'https://premky.com.np',
+            'https://pk-duty.onrender.com'
         ];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
